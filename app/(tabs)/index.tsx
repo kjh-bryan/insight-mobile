@@ -1,5 +1,6 @@
-import { StyleSheet } from 'react-native';
-
+import React from 'react';
+import { Animated, StyleSheet } from 'react-native';
+import { useState } from 'react';
 import { Text, View } from '../../components/Themed';
 import Colors from '../../constants/Colors';
 import Fonts from '../../constants/Fonts';
@@ -12,8 +13,11 @@ import {
   Ionicons,
   Entypo,
 } from '@expo/vector-icons';
+import { CustomModal } from '../../components/Modal';
 
 export default function HomeScreen() {
+  const [showModal, setShowModal] = useState(false);
+  const scaleValue = React.useRef(new Animated.Value(0)).current;
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.titleHeader}>
@@ -21,8 +25,25 @@ export default function HomeScreen() {
           Select an <Text style={styles.titleColor}>Option</Text>
         </Text>
       </View>
+      <CustomModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        scaleValue={scaleValue}
+      >
+        <FontAwesome name="volume-up" color={Colors.light.primary} size={50} />
+      </CustomModal>
       <View style={styles.hugeButtonContainer}>
-        <TouchableOpacity style={styles.hugeButton}>
+        <TouchableOpacity
+          style={styles.hugeButton}
+          onPress={() => {
+            setShowModal(true);
+            Animated.timing(scaleValue, {
+              toValue: 1,
+              useNativeDriver: true,
+              duration: 300,
+            }).start();
+          }}
+        >
           <>
             <FontAwesome
               name="microphone"
