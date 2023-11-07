@@ -61,10 +61,10 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name='index'
+        name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name='home' color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           // headerRight: () => (
           //   <Link href='/modal' asChild>
           //     <Pressable>
@@ -82,32 +82,44 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name='notes'
+        name="notes"
         options={{
           title: 'Lecture Notes',
           tabBarIcon: ({ color }) => (
-            <TabBarSimpleLineIcon name='notebook' color={color} />
+            <TabBarSimpleLineIcon name="notebook" color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name='flashcard'
+        name="flashcard"
         options={{
           title: 'Flash Card',
           tabBarIcon: ({ color }) => (
             <TabBarMaterialCommunityIcon
-              name='card-multiple-outline'
+              name="card-multiple-outline"
               color={color}
             />
           ),
         }}
       />
       <Tabs.Screen
-        name='profile'
+        name="quiz"
+        options={{
+          title: 'Quiz',
+          tabBarIcon: ({ color }) => (
+            <TabBarMaterialCommunityIcon
+              name="progress-question"
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => (
-            <TabBarAntDesignIcon name='user' color={color} />
+            <TabBarAntDesignIcon name="user" color={color} />
           ),
         }}
       />
