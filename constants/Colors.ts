@@ -6,6 +6,7 @@ const white = '#FFFFFF';
 
 export default {
   light: {
+    primary: primaryColor,
     text: '#000',
     background: '#fff',
     tint: white,
@@ -21,6 +22,7 @@ export default {
   //   tabIconSelected: tintColorLight,
   // },
   dark: {
+    primary: white,
     text: '#fff',
     background: '#000',
     tint: tintColorDark,
