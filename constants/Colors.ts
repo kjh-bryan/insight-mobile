@@ -3,6 +3,8 @@ const tintColorDark = '#fff';
 
 const primaryColor = '#FFBEAC';
 const white = '#FFFFFF';
+const slate600 = '#64748B';
+const slate500 = '#64748B';
 
 export default {
   light: {
@@ -10,9 +12,11 @@ export default {
     text: '#000',
     background: '#fff',
     tint: white,
-    tabIconDefault: '#E4E4E4',
+    tabIconDefault: white,
     tabIconSelected: white,
     tabBackgroundColor: primaryColor,
+    slate600,
+    slate500,
   },
   // light: {
   //   text: '#000',
