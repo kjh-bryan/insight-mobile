@@ -159,7 +159,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   uploadFileIcon: {
-    flex: 0.2,
     justifyContent: 'center',
   },
   fileIcon: {
@@ -168,8 +167,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   uploadFileDescription: {
-    flex: 0.7,
+    flex: 0.8,
     marginTop: SIZES.padding / 2,
+    marginLeft: SIZES.padding / 2,
   },
   fileDescriptionTitle: {
     color: Colors.light.slate600,
@@ -180,8 +180,8 @@ const styles = StyleSheet.create({
   },
   uploadFileGenerateButton: {
     position: 'absolute',
-    bottom: 5,
-    right: 5,
+    bottom: 10,
+    right: 20,
   },
   generateButton: {
     backgroundColor: Colors.light.primary,
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   uploadFileCancel: {
     position: 'absolute',
     top: 5,
-    right: 5,
+    right: 20,
   },
   fileCancel: {
     fontSize: 20,
