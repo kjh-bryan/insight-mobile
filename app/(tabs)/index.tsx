@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, StyleSheet } from 'react-native';
+import { Animated, StyleSheet, useColorScheme } from 'react-native';
 import { useState } from 'react';
 import { Text, View } from '../../components/Themed';
 import Colors from '../../constants/Colors';
@@ -18,10 +18,22 @@ import { CustomModal } from '../../components/Modal';
 export default function HomeScreen() {
   const [showModal, setShowModal] = useState(false);
   const scaleValue = React.useRef(new Animated.Value(0)).current;
+  const colorScheme = useColorScheme();
+  const themeTextStyle =
+    colorScheme === 'light' ? styles.lightColor : styles.darkColor;
+
+  const themeBackgroundStyle =
+    colorScheme === 'light' ? styles.lightBackground : styles.darkBackground;
+
+  const themeSecondaryBackgroundStyle =
+    colorScheme === 'light'
+      ? styles.lightBackground
+      : styles.secondaryDarkBackground;
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.titleHeader}>
-        <Text style={styles.title}>
+    <SafeAreaView style={[styles.container, themeBackgroundStyle]}>
+      <View style={[styles.titleHeader, themeBackgroundStyle]}>
+        <Text style={[styles.title, themeTextStyle]}>
           Select an <Text style={styles.titleColor}>Option</Text>
         </Text>
       </View>
@@ -32,9 +44,9 @@ export default function HomeScreen() {
       >
         <FontAwesome name="volume-up" color={Colors.light.primary} size={50} />
       </CustomModal>
-      <View style={styles.hugeButtonContainer}>
+      <View style={[styles.hugeButtonContainer, themeBackgroundStyle]}>
         <TouchableOpacity
-          style={styles.hugeButton}
+          style={[styles.hugeButton, themeSecondaryBackgroundStyle]}
           onPress={() => {
             setShowModal(true);
             Animated.timing(scaleValue, {
@@ -54,8 +66,10 @@ export default function HomeScreen() {
           </>
         </TouchableOpacity>
       </View>
-      <View style={styles.hugeButtonContainer}>
-        <TouchableOpacity style={styles.hugeButton}>
+      <View style={[styles.hugeButtonContainer, themeBackgroundStyle]}>
+        <TouchableOpacity
+          style={[styles.hugeButton, themeSecondaryBackgroundStyle]}
+        >
           <MaterialIcons
             name="file-download"
             style={styles.hugeButtonIcon}
@@ -64,23 +78,25 @@ export default function HomeScreen() {
           <Text style={styles.hugeButtonLabel}>Import Lecture Notes</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.uploadFileContainer}>
-        <View style={styles.uploadFile}>
-          <View style={styles.uploadFileIcon}>
+      <View style={[styles.uploadFileContainer, themeBackgroundStyle]}>
+        <View style={[styles.uploadFile, themeBackgroundStyle]}>
+          <View style={[styles.uploadFileIcon, themeBackgroundStyle]}>
             <Ionicons name="document-text" style={styles.fileIcon} />
           </View>
-          <View style={styles.uploadFileDescription}>
-            <Text style={styles.fileDescriptionTitle}>
-              Database System Lecture 1
+          <View style={[styles.uploadFileDescription, themeBackgroundStyle]}>
+            <Text style={[themeTextStyle]}>Database System Lecture 1</Text>
+            <Text style={[styles.fileDescriptionSubtitle, themeTextStyle]}>
+              402kb
             </Text>
-            <Text style={styles.fileDescriptionSubtitle}>402kb</Text>
           </View>
-          <View style={styles.uploadFileGenerateButton}>
+          <View style={[styles.uploadFileGenerateButton, themeBackgroundStyle]}>
             <TouchableOpacity style={styles.generateButton}>
-              <Text style={styles.generateButtonText}>Generate Flashcard</Text>
+              <Text style={[styles.generateButtonText]} weight="bold">
+                Generate Flashcard
+              </Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.uploadFileCancel}>
+          <View style={[styles.uploadFileCancel, themeBackgroundStyle]}>
             <TouchableOpacity>
               <Entypo name="cross" style={styles.fileCancel} />
             </TouchableOpacity>
@@ -94,7 +110,24 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.tint,
+  },
+  lightBackground: {
+    backgroundColor: Colors.light.background,
+  },
+  darkBackground: {
+    backgroundColor: Colors.dark.background,
+  },
+  secondaryDarkBackground: {
+    backgroundColor: Colors.dark.secondaryBackground,
+  },
+  lightColor: {
+    color: Colors.light.text,
+  },
+  secondaryLightColor: {
+    color: Colors.light.secondaryText,
+  },
+  darkColor: {
+    color: Colors.dark.text,
   },
   titleHeader: {
     marginTop: SIZES.marginTop,
@@ -121,7 +154,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.light.primary,
     borderWidth: 1,
     borderRadius: SIZES.radius,
-    backgroundColor: Colors.light.tint,
     shadowColor: '#171717',
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
@@ -171,12 +203,8 @@ const styles = StyleSheet.create({
     marginTop: SIZES.padding / 2,
     marginLeft: SIZES.padding / 2,
   },
-  fileDescriptionTitle: {
-    color: Colors.light.slate600,
-  },
   fileDescriptionSubtitle: {
     marginTop: SIZES.padding / 4,
-    color: Colors.light.slate500,
   },
   uploadFileGenerateButton: {
     position: 'absolute',
@@ -189,7 +217,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   generateButtonText: {
-    color: Colors.light.tint,
+    color: Colors.dark.text,
   },
   uploadFileCancel: {
     position: 'absolute',
