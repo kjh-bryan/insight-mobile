@@ -23,6 +23,7 @@ import {
 import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -69,7 +70,11 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <RootLayoutNav />
+    </SafeAreaView>
+  );
 }
 
 function RootLayoutNav() {

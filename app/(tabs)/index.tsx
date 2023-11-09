@@ -31,7 +31,7 @@ export default function HomeScreen() {
       : styles.secondaryDarkBackground;
 
   return (
-    <SafeAreaView style={[styles.container, themeBackgroundStyle]}>
+    <View style={[styles.container, themeBackgroundStyle]}>
       <View style={[styles.titleHeader, themeBackgroundStyle]}>
         <Text style={[styles.title, themeTextStyle]}>
           Select an <Text style={styles.titleColor}>Option</Text>
@@ -103,7 +103,7 @@ export default function HomeScreen() {
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
