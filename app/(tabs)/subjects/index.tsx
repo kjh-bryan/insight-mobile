@@ -8,7 +8,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-import { mainNote, mainNoteType } from '../../../constants/Data';
+import { subjects, subjectType } from '../../../constants/Data';
 import { ListViewItem } from '../../../components/ListViewItem';
 import Colors from '../../../constants/Colors';
 import {
@@ -29,17 +29,17 @@ export default function SubjectsScreen() {
   const [item, setItem] = useState([] as any);
   const insets = useSafeAreaInsets();
   console.log(insets);
-  const notes = mainNote;
+  const notes = subjects;
   useEffect(() => {
     (() => {
-      setItem(mainNote);
+      setItem(subjects);
     })();
   }, []);
 
   const handleSearchInput = (text: string) => {
     setSearchValue(text);
     // Show list view on text
-    const newItems: mainNoteType[] = [];
+    const newItems: subjectType[] = [];
 
     notes.forEach((items) => {
       if (items.title.match(text)) {
@@ -55,7 +55,7 @@ export default function SubjectsScreen() {
       style={[
         styles.container,
         themeBackgroundStyle,
-        { marginBottom: insets.bottom },
+        { marginBottom: insets.bottom, paddingTop: insets.top },
       ]}
     >
       <View style={{ flex: 1.5 }}>

@@ -40,14 +40,14 @@ export const notes2: noteType[] = [
   },
 ];
 
-export type mainNoteType = {
+export type subjectType = {
   id: string;
   title: string;
   category?: string;
   notes?: noteType[];
 };
 
-export const mainNote: mainNoteType[] = [
+export const subjects: subjectType[] = [
   {
     id: 'Main1',
     title: 'SC2006 - Software Engineering',
