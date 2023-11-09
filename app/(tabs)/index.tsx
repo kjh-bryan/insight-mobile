@@ -14,21 +14,17 @@ import {
   Entypo,
 } from '@expo/vector-icons';
 import { CustomModal } from '../../components/Modal';
+import { ThemeUtils } from '../../utils/ThemeUtils';
 
 export default function HomeScreen() {
   const [showModal, setShowModal] = useState(false);
   const scaleValue = React.useRef(new Animated.Value(0)).current;
-  const colorScheme = useColorScheme();
-  const themeTextStyle =
-    colorScheme === 'light' ? styles.lightColor : styles.darkColor;
 
-  const themeBackgroundStyle =
-    colorScheme === 'light' ? styles.lightBackground : styles.darkBackground;
-
-  const themeSecondaryBackgroundStyle =
-    colorScheme === 'light'
-      ? styles.lightBackground
-      : styles.secondaryDarkBackground;
+  const {
+    themeTextStyle,
+    themeBackgroundStyle,
+    themeSecondaryBackgroundStyle,
+  } = ThemeUtils();
 
   return (
     <View style={[styles.container, themeBackgroundStyle]}>
@@ -111,24 +107,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  lightBackground: {
-    backgroundColor: Colors.light.background,
-  },
-  darkBackground: {
-    backgroundColor: Colors.dark.background,
-  },
-  secondaryDarkBackground: {
-    backgroundColor: Colors.dark.secondaryBackground,
-  },
-  lightColor: {
-    color: Colors.light.text,
-  },
-  secondaryLightColor: {
-    color: Colors.light.secondaryText,
-  },
-  darkColor: {
-    color: Colors.dark.text,
-  },
+
   titleHeader: {
     marginTop: SIZES.marginTop,
     flexDirection: 'row',

@@ -1,21 +1,15 @@
 import React, { Ref } from 'react';
 import {
-  Button,
   View,
   StyleSheet,
   Modal,
   TouchableOpacity,
   Animated,
 } from 'react-native';
-import {
-  FontAwesome,
-  MaterialIcons,
-  Ionicons,
-  Entypo,
-} from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { SIZES } from '../constants/Theme';
 import { Text } from './Themed';
+import { ThemeUtils } from '../utils/ThemeUtils';
 
 type CustomModalProps = {
   showModal: boolean;
@@ -30,19 +24,27 @@ export function CustomModal({
   setShowModal,
   children,
 }: CustomModalProps) {
+  const {
+    themeBackgroundStyle,
+    themeSecondaryBackgroundStyle,
+    themeTextStyle,
+  } = ThemeUtils();
   return (
     <Modal transparent visible={showModal}>
       <View style={styles.modalBackground}>
         <Animated.View
           style={[
             styles.modalContainer,
+            themeBackgroundStyle,
             { transform: [{ scale: scaleValue }] },
           ]}
         >
           <View style={styles.modalTopContainer}>
             <View style={{ alignItems: 'center' }}></View>
             <View style={{ alignItems: 'center' }}>{children}</View>
-            <Text style={styles.modalSubtitle}>Listening..</Text>
+            <Text style={[styles.modalSubtitle, themeTextStyle]}>
+              Listening..
+            </Text>
           </View>
           <View style={styles.modalBottomContainer}>
             <TouchableOpacity
@@ -56,7 +58,13 @@ export function CustomModal({
                 }).start();
               }}
             >
-              <Text style={[styles.buttonLabelLeftColor, styles.buttonLabel]}>
+              <Text
+                style={[
+                  styles.buttonLabelLeftColor,
+                  styles.buttonLabel,
+                  themeTextStyle,
+                ]}
+              >
                 Cancel
               </Text>
             </TouchableOpacity>
