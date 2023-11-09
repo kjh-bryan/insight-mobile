@@ -24,6 +24,7 @@ import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeUtils } from '../utils/ThemeUtils';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -70,22 +71,21 @@ export default function RootLayout() {
     return null;
   }
 
-  return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <RootLayoutNav />
-    </SafeAreaView>
-  );
+  return <RootLayoutNav />;
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
+  const { themeBackgroundStyle } = ThemeUtils();
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
+    <ThemeProvider value={colorScheme === 'light' ? DarkTheme : DefaultTheme}>
+      <SafeAreaView style={[{ flex: 1 }, themeBackgroundStyle]}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </SafeAreaView>
     </ThemeProvider>
   );
 }
