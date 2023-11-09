@@ -17,7 +17,10 @@ type ThemeProps = {
   darkColor?: string;
 };
 
-export type TextProps = ThemeProps & DefaultText['props'] & { weight?: string };
+export type TextProps = ThemeProps &
+  DefaultText['props'] & {
+    weight?: 'light' | 'regular' | 'medium' | 'semibold' | 'bold';
+  };
 export type ViewProps = ThemeProps & DefaultView['props'];
 
 export function useThemeColor(
