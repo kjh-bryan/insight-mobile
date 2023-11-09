@@ -3,17 +3,18 @@ const tintColorDark = '#fff';
 
 const primaryColor = '#FFBEAC';
 const white = '#FFFFFF';
-const slate600 = '#64748B';
+const slate600 = '#475569';
 const slate500 = '#64748B';
 
 export default {
   light: {
     primary: primaryColor,
-    text: '#000',
-    background: '#fff',
-    tint: white,
+    text: slate600,
+    secondaryText: slate500,
+    background: white,
+    tint: primaryColor,
     tabIconDefault: white,
-    tabIconSelected: white,
+    tabIconSelected: primaryColor,
     tabBackgroundColor: primaryColor,
     slate600,
     slate500,
@@ -26,12 +27,15 @@ export default {
   //   tabIconSelected: tintColorLight,
   // },
   dark: {
-    primary: white,
-    text: '#fff',
-    background: '#000',
-    tint: tintColorDark,
-    tabIconDefault: '#ccc',
-    tabIconSelected: tintColorDark,
-    tabBackgroundColor: white,
+    primary: primaryColor,
+    text: white,
+    background: slate600,
+    secondaryBackground: slate500,
+    tint: slate600,
+    tabIconDefault: primaryColor,
+    tabIconSelected: slate600,
+    tabBackgroundColor: slate500,
+    slate600,
+    slate500,
   },
 };

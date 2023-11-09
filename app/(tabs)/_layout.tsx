@@ -48,13 +48,12 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor:
-          Colors[colorScheme ?? 'light'].tabBackgroundColor,
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         tabBarInactiveTintColor: Colors[colorScheme ?? 'light'].tabIconDefault,
-        tabBarActiveBackgroundColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveBackgroundColor:
+          Colors[colorScheme ?? 'light'].tabIconDefault,
         tabBarInactiveBackgroundColor:
           Colors[colorScheme ?? 'light'].tabBackgroundColor,
-        tabBarShowLabel: false,
         tabBarStyle: {
           height: 65,
         },
