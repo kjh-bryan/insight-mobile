@@ -8,7 +8,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-import { subjects, subjectType } from '../../../constants/Data';
+import { NoteType, subjectsData, SubjectType } from '../../../constants/Data';
 import { ListViewItem } from '../../../components/ListViewItem';
 import Colors from '../../../constants/Colors';
 import {
@@ -26,28 +26,36 @@ export default function SubjectsScreen() {
     themeSecondaryBackgroundStyle,
   } = ThemeUtils();
   const [searchValue, setSearchValue] = useState('');
-  const [item, setItem] = useState([] as any);
+  const mockedSubjects = subjectsData;
+  const [subjects, setSubjects] = useState<SubjectType[]>(mockedSubjects);
   const insets = useSafeAreaInsets();
   console.log(insets);
-  const notes = subjects;
   useEffect(() => {
     (() => {
-      setItem(subjects);
+      setSubjects(mockedSubjects);
     })();
   }, []);
 
   const handleSearchInput = (text: string) => {
     setSearchValue(text);
     // Show list view on text
-    const newItems: subjectType[] = [];
+    const newItems: SubjectType[] = [];
 
-    notes.forEach((items) => {
-      if (items.title.match(text)) {
+    mockedSubjects.forEach((items) => {
+      if (items.title.toLowerCase().match(text.toLowerCase())) {
         newItems.push(items);
       }
     });
-
-    setItem(newItems);
+    if (text) {
+      const filteredList = mockedSubjects.filter((subject: SubjectType) =>
+        subject.title.toLowerCase().includes(text.toLowerCase())
+      );
+      setSubjects(filteredList);
+    } else {
+      setSubjects(mockedSubjects);
+    }
+    setSubjects(newItems);
+    console.log(subjects);
   };
 
   return (
@@ -71,13 +79,19 @@ export default function SubjectsScreen() {
       <View style={{ flex: 6 }}>
         {/* List View */}
         <FlatList
-          data={item}
-          renderItem={({ item }) => (
+          keyExtractor={(item) => item.id}
+          data={subjects}
+          renderItem={({ item }: { item: SubjectType }) => (
             <TouchableWithoutFeedback
               onPress={() => {
                 router.push({
                   pathname: '/(tabs)/subjects/notes',
-                  params: item,
+                  params: {
+                    id: item.id,
+                    category: item.category,
+                    title: item.title,
+                    notes: JSON.stringify(item.notes),
+                  },
                 });
               }}
             >

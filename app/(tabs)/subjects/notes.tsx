@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text, View } from '../../../components/Themed';
 import { useLocalSearchParams } from 'expo-router';
-import { subjectType, noteType } from '../../../constants/Data';
+import { SubjectType, NoteType } from '../../../constants/Data';
 import { SIZES } from '../../../constants/Theme';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
 import {
@@ -11,12 +11,19 @@ import {
   TouchableOpacity,
 } from 'react-native-gesture-handler';
 import Colors from '../../../constants/Colors';
+import { CardViewItem } from '../../../components/CardViewItem';
 
 export default function NotesScreen() {
-  const subject = useLocalSearchParams() as unknown as subjectType;
-  const [noteItems, setNoteItem] = useState<noteType[]>(subject.notes || []);
-  const notes = subject.notes ? Object.values(subject.notes) : [];
-  console.log(notes);
+  const { id, category, title, notes } = useLocalSearchParams<{
+    id: string;
+    category: string;
+    title: string;
+    notes: string;
+  }>();
+  const [noteItems, setNoteItem] = useState<NoteType[]>(JSON.parse(notes));
+  console.log(id);
+  console.log(category);
+  console.log(noteItems);
   const {
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
@@ -24,25 +31,31 @@ export default function NotesScreen() {
   } = ThemeUtils();
   const [searchValue, setSearchValue] = useState('');
 
+  useEffect(() => {
+    (() => {
+      setNoteItem(JSON.parse(notes));
+    })();
+  }, []);
+
   const handleSearchInput = (text: string) => {
     setSearchValue(text);
     // Show list view on text
-    const newItems: noteType[] = [];
 
-    noteItems.forEach((item) => {
-      if (item.noteTitle.match(text)) {
-        newItems.push(item);
-      }
-    });
-
-    setNoteItem(newItems);
+    if (text) {
+      const filteredList = JSON.parse(notes).filter((note: NoteType) =>
+        note.noteTitle.toLowerCase().includes(text.toLowerCase())
+      );
+      setNoteItem(filteredList);
+    } else {
+      setNoteItem(JSON.parse(notes));
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.subjectTitle, themeTextStyle]}>{subject.title}</Text>
+      <Text style={[styles.subjectTitle, themeTextStyle]}>{title}</Text>
       <Text weight="semibold" style={styles.categoryTitle}>
-        {subject.category}
+        {category}
       </Text>
       <TextInput
         style={styles.searchInput}
@@ -50,22 +63,26 @@ export default function NotesScreen() {
         placeholder="Search"
         onChangeText={(text) => handleSearchInput(text)}
       />
-      <FlatList
-        data={noteItems}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => {
-              // open pdf
-              console.log('Print pdf url : ', item.pdfUrl);
-            }}
-          >
-            <View style={{ flex: 1, padding: 24 }}>
-              <Text>{item.id}</Text>
-              <Text>{item.noteTitle}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      />
+      <View style={styles.cardViewContainer}>
+        <FlatList
+          numColumns={2}
+          columnWrapperStyle={{
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+          }}
+          data={noteItems}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => {
+                // open pdf
+                console.log('Print pdf url : ', item);
+              }}
+            >
+              <CardViewItem item={item} />
+            </TouchableOpacity>
+          )}
+        />
+      </View>
     </View>
   );
 }
@@ -75,6 +92,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: SIZES.padding,
     paddingTop: SIZES.base * 2,
+    paddingBottom: SIZES.base * 2,
   },
   subjectTitle: {
     fontSize: SIZES.h2,
@@ -90,5 +108,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: SIZES.padding,
     paddingVertical: SIZES.base / 2,
     borderColor: Colors.default.slate500,
+  },
+  cardViewContainer: {
+    flex: 1,
+    paddingHorizontal: SIZES.base,
+    paddingTop: SIZES.base,
   },
 });

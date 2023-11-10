@@ -1,10 +1,10 @@
-export type noteType = {
+export type NoteType = {
   id: string;
   noteTitle: string;
-  pdfUrl?: string;
+  pdfUrl?: string | '';
 };
 
-export const notes1: noteType[] = [
+export const notes1 = [
   {
     id: 'Note1',
     noteTitle: 'Lecture 2 - Software Processes - Basics',
@@ -20,9 +20,39 @@ export const notes1: noteType[] = [
     noteTitle: 'Lecture 5 - Requirements',
     pdfUrl: '',
   },
+  {
+    id: 'Note4',
+    noteTitle: 'Lecture 5 - Requirements',
+    pdfUrl: '',
+  },
+  {
+    id: 'Note5',
+    noteTitle: 'Lecture 5 - Requirements',
+    pdfUrl: '',
+  },
+  {
+    id: 'Note6',
+    noteTitle: 'Lecture 5 - Requirements',
+    pdfUrl: '',
+  },
+  {
+    id: 'Note7',
+    noteTitle: 'Lecture 5 - Requirements',
+    pdfUrl: '',
+  },
+  {
+    id: 'Note8',
+    noteTitle: 'Lecture 5 - Requirements',
+    pdfUrl: '',
+  },
+  {
+    id: 'Note9',
+    noteTitle: 'Lecture 5 - Requirements',
+    pdfUrl: '',
+  },
 ];
 
-export const notes2: noteType[] = [
+export const notes2 = [
   {
     id: 'Note1',
     noteTitle: 'Lecture 1 - System of Linear Equations',
@@ -40,14 +70,14 @@ export const notes2: noteType[] = [
   },
 ];
 
-export type subjectType = {
+export type SubjectType = {
   id: string;
   title: string;
-  category?: string;
-  notes?: noteType[];
+  category: string;
+  notes?: NoteType[] | [];
 };
 
-export const subjects: subjectType[] = [
+export const subjectsData: SubjectType[] = [
   {
     id: 'Main1',
     title: 'SC2006 - Software Engineering',
