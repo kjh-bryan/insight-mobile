@@ -19,13 +19,12 @@ export default {
     slate600,
     slate500,
   },
-  // light: {
-  //   text: '#000',
-  //   background: '#fff',
-  //   tint: tintColorLight,
-  //   tabIconDefault: '#ccc',
-  //   tabIconSelected: tintColorLight,
-  // },
+  default: {
+    primary: primaryColor,
+    white,
+    slate600,
+    slate500,
+  },
   dark: {
     primary: primaryColor,
     text: white,

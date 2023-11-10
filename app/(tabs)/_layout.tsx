@@ -46,6 +46,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   return (
     <Tabs
+      safeAreaInsets={{ bottom: 0 }}
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         tabBarInactiveTintColor: Colors[colorScheme ?? 'light'].tabIconDefault,
@@ -81,9 +82,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="notes"
+        name="subjects"
         options={{
-          title: 'Lecture Notes',
+          title: 'Subjects',
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <TabBarSimpleLineIcon name="notebook" color={color} />
           ),
