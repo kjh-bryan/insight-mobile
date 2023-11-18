@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text, View } from '../../../components/Themed';
 import { useLocalSearchParams } from 'expo-router';
-import { SubjectType, NoteType } from '../../../constants/Data';
+import { NoteType } from '../../../constants/Data';
 import { SIZES } from '../../../constants/Theme';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
 import {
@@ -21,9 +21,6 @@ export default function NotesScreen() {
     notes: string;
   }>();
   const [noteItems, setNoteItem] = useState<NoteType[]>(JSON.parse(notes));
-  console.log(id);
-  console.log(category);
-  console.log(noteItems);
   const {
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
@@ -52,7 +49,7 @@ export default function NotesScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: 'green' }]}>
       <Text style={[styles.subjectTitle, themeTextStyle]}>{title}</Text>
       <Text weight="semibold" style={styles.categoryTitle}>
         {category}
@@ -75,7 +72,7 @@ export default function NotesScreen() {
             <TouchableOpacity
               onPress={() => {
                 // open pdf
-                console.log('Print pdf url : ', item);
+                console.log('Print pdf url : ', item.pdfUrl);
               }}
             >
               <CardViewItem item={item} />

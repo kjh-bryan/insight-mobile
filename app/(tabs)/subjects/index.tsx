@@ -8,18 +8,14 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-import { NoteType, subjectsData, SubjectType } from '../../../constants/Data';
+import { subjectsData, SubjectType } from '../../../constants/Data';
 import { ListViewItem } from '../../../components/ListViewItem';
 import Colors from '../../../constants/Colors';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 
 export default function SubjectsScreen() {
-  const deviceHeight = Dimensions.get('window').height;
   const {
     themeTextStyle,
     themeBackgroundStyle,
@@ -29,7 +25,6 @@ export default function SubjectsScreen() {
   const mockedSubjects = subjectsData;
   const [subjects, setSubjects] = useState<SubjectType[]>(mockedSubjects);
   const insets = useSafeAreaInsets();
-  console.log(insets);
   useEffect(() => {
     (() => {
       setSubjects(mockedSubjects);
@@ -59,13 +54,7 @@ export default function SubjectsScreen() {
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        themeBackgroundStyle,
-        { marginBottom: insets.bottom, paddingTop: insets.top },
-      ]}
-    >
+    <View style={[styles.container, { backgroundColor: 'red' }]}>
       <View style={{ flex: 1.5 }}>
         {/* Title */}
         <Text style={[styles.headerTitle]}>Notes</Text>

@@ -14,10 +14,8 @@ const StackLayout = () => {
       <Stack.Screen
         name="notes"
         options={{
-          title: '',
-          headerStyle: {
-            backgroundColor: Colors.default.white,
-          },
+          title: 'Hi',
+          headerStyle: {},
           headerShadowVisible: false,
           headerTintColor: Colors.default.primary,
         }}
