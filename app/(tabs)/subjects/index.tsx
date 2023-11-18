@@ -11,7 +11,10 @@ import {
 import { subjectsData, SubjectType } from '../../../constants/Data';
 import { ListViewItem } from '../../../components/ListViewItem';
 import Colors from '../../../constants/Colors';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
@@ -54,8 +57,8 @@ export default function SubjectsScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: 'red' }]}>
-      <View style={{ flex: 1.5 }}>
+    <View style={[styles.safeAreaContainer, { paddingTop: insets.top }]}>
+      <View style={[styles.container, { flex: 1.5 }]}>
         {/* Title */}
         <Text style={[styles.headerTitle]}>Notes</Text>
         <TextInput
@@ -107,6 +110,9 @@ export default function SubjectsScreen() {
 }
 
 const styles = StyleSheet.create({
+  safeAreaContainer: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     paddingHorizontal: SIZES.padding,

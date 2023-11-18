@@ -49,7 +49,7 @@ export default function NotesScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: 'green' }]}>
+    <View style={[styles.container]}>
       <Text style={[styles.subjectTitle, themeTextStyle]}>{title}</Text>
       <Text weight="semibold" style={styles.categoryTitle}>
         {category}
