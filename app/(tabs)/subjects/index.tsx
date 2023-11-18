@@ -57,8 +57,8 @@ export default function SubjectsScreen() {
   };
 
   return (
-    <View style={[styles.safeAreaContainer, { paddingTop: insets.top }]}>
-      <View style={[styles.container, { flex: 1.5 }]}>
+    <View style={[styles.container]}>
+      <View style={[{ flex: 1.5 }]}>
         {/* Title */}
         <Text style={[styles.headerTitle]}>Notes</Text>
         <TextInput
@@ -116,7 +116,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: SIZES.padding,
-    paddingTop: SIZES.base * 2,
   },
   headerContainer: {
     flex: 1,

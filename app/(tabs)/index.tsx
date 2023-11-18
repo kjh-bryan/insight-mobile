@@ -109,7 +109,6 @@ const styles = StyleSheet.create({
   },
 
   titleHeader: {
-    marginTop: SIZES.marginTop,
     flexDirection: 'row',
     justifyContent: 'center',
   },
