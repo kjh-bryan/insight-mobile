@@ -107,6 +107,7 @@ export default function TabLayout() {
         name="quiz"
         options={{
           title: 'Quiz',
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <TabBarMaterialCommunityIcon
               name="progress-question"
