@@ -22,9 +22,10 @@ const StackLayout = () => {
           header: () => (
             <View
               style={{
-                height: 80,
-                paddingTop: insets.top,
-                justifyContent: 'center',
+                height: 20,
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                flexDirection: 'row',
               }}
             >
               <AntDesign
@@ -36,6 +37,7 @@ const StackLayout = () => {
                 color={Colors.default.slate600}
                 style={{ marginLeft: 20 }}
               />
+              <Text style={{ marginLeft: 10 }}>Back</Text>
             </View>
           ),
           headerShadowVisible: false,

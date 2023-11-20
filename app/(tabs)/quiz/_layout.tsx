@@ -21,7 +21,59 @@ const StackLayout = () => {
       <Stack.Screen
         name="subjectquiz"
         options={{
-          headerShown: false,
+          title: '',
+          header: () => (
+            <View
+              style={{
+                height: 20,
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                flexDirection: 'row',
+              }}
+            >
+              <AntDesign
+                name="caretleft"
+                onPress={() => {
+                  router.back();
+                }}
+                size={20}
+                color={Colors.default.slate600}
+                style={{ marginLeft: 20 }}
+              />
+              <Text style={{ marginLeft: 10 }}>Back</Text>
+            </View>
+          ),
+          headerShadowVisible: false,
+          headerTintColor: Colors.default.primary,
+        }}
+      />
+      <Stack.Screen
+        name="question"
+        options={{
+          title: '',
+          header: () => (
+            <View
+              style={{
+                height: 20,
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                flexDirection: 'row',
+              }}
+            >
+              <AntDesign
+                name="caretleft"
+                onPress={() => {
+                  router.back();
+                }}
+                size={20}
+                color={Colors.default.slate600}
+                style={{ marginLeft: 20 }}
+              />
+              <Text style={{ marginLeft: 10 }}>Back</Text>
+            </View>
+          ),
+          headerShadowVisible: false,
+          headerTintColor: Colors.default.primary,
         }}
       />
     </Stack>
