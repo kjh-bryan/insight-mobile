@@ -76,6 +76,15 @@ const StackLayout = () => {
           headerTintColor: Colors.default.primary,
         }}
       />
+      <Stack.Screen
+        name="result"
+        options={{
+          title: '',
+          headerShown: false,
+          headerShadowVisible: false,
+          headerTintColor: Colors.default.primary,
+        }}
+      />
     </Stack>
   );
 };

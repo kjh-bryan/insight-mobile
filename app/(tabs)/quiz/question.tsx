@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Touchable, TouchableOpacity } from 'react-native';
 import { Text, View } from '../../../components/Themed';
 import { SIZES } from '../../../constants/Theme';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
 import { QuestionType } from '../../../constants/Data';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -29,7 +29,6 @@ export default function QuestionScreen() {
   const [score, setScore] = useState(0);
   const totalQuestion = quizQuestion.length;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const progressStep = 100 / totalQuestion / 100;
   console.log((100 / totalQuestion / 100) * (currentQuestionIndex + 1));
   const [currentQuestion, setCurrentQuestion] = useState<QuestionType>(
     quizQuestion[currentQuestionIndex]
@@ -94,9 +93,6 @@ export default function QuestionScreen() {
               if (answer.match(currentQuestion.answer)) {
                 setScore(score + 1);
               }
-              console.log('Current question : ', currentQuestion.question);
-              console.log('Current answer : ', currentQuestion.answer);
-              console.log('Current choice : ', answer);
               setCurrentQuestionIndex(currentQuestionIndex + 1);
               setCurrentQuestion(quizQuestion[currentQuestionIndex + 1]);
               setAnswer('');
@@ -105,11 +101,22 @@ export default function QuestionScreen() {
               console.log(
                 'Congrats you scored :' + score + '/' + totalQuestion
               );
+
+              router.replace({
+                pathname: '/(tabs)/quiz/result',
+                params: {
+                  quizTitle: quizTitle,
+                  score: score,
+                  totalQuestion: totalQuestion,
+                },
+              });
             }
           }}
         >
           <Text style={[styles.nextQuestionButtonLabel]} weight="semibold">
-            Next Question
+            {currentQuestionIndex + 1 == totalQuestion
+              ? 'Finish'
+              : 'Next Question'}
           </Text>
         </TouchableOpacity>
       </View>
