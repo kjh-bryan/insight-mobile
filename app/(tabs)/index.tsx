@@ -15,10 +15,57 @@ import {
 } from '@expo/vector-icons';
 import { CustomModal } from '../../components/Modal';
 import { ThemeUtils } from '../../utils/ThemeUtils';
+import { Audio } from 'expo-av';
+import { Recording } from 'expo-av/build/Audio';
+import { postSpeechToText } from '../../services/speechtotext';
 
 export default function HomeScreen() {
   const [showModal, setShowModal] = useState(false);
+  const [recording, setRecording] = useState<Recording>();
   const scaleValue = React.useRef(new Animated.Value(0)).current;
+
+  async function startRecording() {
+    try {
+      console.log('Requesting permissions..');
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      console.log('Starting recording..');
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+
+      setRecording(recording);
+      console.log('Recording started');
+    } catch (err) {
+      console.error('Failed to start recording', err);
+    }
+  }
+
+  async function stopRecording(status: boolean) {
+    console.log('Stopping recording..');
+    setRecording(undefined);
+    await recording?.stopAndUnloadAsync();
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+    });
+    if (status) {
+      const uri = recording?.getURI();
+      console.log('Recording stopped and stored at', uri);
+      const bodyFormData = new FormData();
+      const result = await postSpeechToText(recording);
+
+      if (result) {
+        console.log('result exist');
+        console.log(result);
+      }
+    } else {
+      console.log('Recording stopped.');
+    }
+  }
 
   const {
     themeTextStyle,
@@ -37,6 +84,7 @@ export default function HomeScreen() {
         showModal={showModal}
         setShowModal={setShowModal}
         scaleValue={scaleValue}
+        stopFunction={stopRecording}
       >
         <FontAwesome name="volume-up" color={Colors.light.primary} size={50} />
       </CustomModal>
@@ -50,6 +98,7 @@ export default function HomeScreen() {
               useNativeDriver: true,
               duration: 300,
             }).start();
+            startRecording();
           }}
         >
           <>

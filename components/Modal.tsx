@@ -16,6 +16,7 @@ type CustomModalProps = {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   children?: React.ReactElement;
   scaleValue?: any;
+  stopFunction?: (status: boolean) => Promise<void>;
 };
 
 export function CustomModal({
@@ -23,6 +24,7 @@ export function CustomModal({
   showModal,
   setShowModal,
   children,
+  stopFunction,
 }: CustomModalProps) {
   const {
     themeBackgroundStyle,
@@ -56,6 +58,9 @@ export function CustomModal({
                   duration: 200,
                   useNativeDriver: true,
                 }).start();
+                if (stopFunction) {
+                  stopFunction(false);
+                }
               }}
             >
               <Text
@@ -69,6 +74,17 @@ export function CustomModal({
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() => {
+                setTimeout(() => setShowModal(false), 200);
+                Animated.timing(scaleValue, {
+                  toValue: 0,
+                  duration: 200,
+                  useNativeDriver: true,
+                }).start();
+                if (stopFunction) {
+                  stopFunction(true);
+                }
+              }}
               style={[styles.modalButton, styles.modalButtonLeftSeparator]}
             >
               <Text style={[styles.buttonLabelRightColor, styles.buttonLabel]}>
