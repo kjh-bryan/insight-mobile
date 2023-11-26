@@ -41,4 +41,7 @@ export default {
     slate600,
     slate500,
   },
+  primary: '#53419c',
+  lightGrey: '#eee',
+  darkGrey: '#333',
 };
