@@ -16,17 +16,56 @@ import {
 import { CustomModal } from '../../components/Modal';
 import { ThemeUtils } from '../../utils/ThemeUtils';
 import { Audio } from 'expo-av';
-import { Recording } from 'expo-av/build/Audio';
-import { postSpeechToText } from '../../services/speechtotext';
+import {
+  AndroidAudioEncoder,
+  AndroidOutputFormat,
+  IOSAudioQuality,
+  IOSOutputFormat,
+  Recording,
+} from 'expo-av/build/Audio';
+import { healthCheck, postSpeechToText } from '../../services/speechtotext';
+import { SPEECH_SUBSCRIPTION_KEY, SERVICE_REGION } from '@env';
+import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 
 export default function HomeScreen() {
   const [showModal, setShowModal] = useState(false);
   const [recording, setRecording] = useState<Recording>();
   const scaleValue = React.useRef(new Animated.Value(0)).current;
 
+  async function sttFromMic() {
+    console.log(SPEECH_SUBSCRIPTION_KEY);
+    console.log(SERVICE_REGION);
+    const speechConfig = sdk.SpeechConfig.fromSubscription(
+      SPEECH_SUBSCRIPTION_KEY,
+      SERVICE_REGION
+    );
+
+    const audioConfig = sdk.AudioConfig.fromWavFileInput(recording);
+    const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
+
+    recognizer.recognizeOnceAsync((result) => {
+      if (result.reason === sdk.ResultReason.RecognizedSpeech) {
+        console.log(`RECOGNIZED: Text=${result.text}`);
+      } else {
+        console.log(
+          'ERROR: Speech was cancelled or could not be recognized. Ensure your microphone is working properly.'
+        );
+      }
+    });
+  }
+
   async function startRecording() {
     try {
       console.log('Requesting permissions..');
+
+      setShowModal(true);
+      Animated.timing(scaleValue, {
+        toValue: 1,
+        useNativeDriver: true,
+        duration: 300,
+      }).start();
+      // const recognizer = await sttFromMic();
+
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
@@ -34,12 +73,44 @@ export default function HomeScreen() {
       });
 
       console.log('Starting recording..');
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
-      );
+      const { recording } = await Audio.Recording.createAsync({
+        isMeteringEnabled: true,
+        android: {
+          extension: '.wav',
+          outputFormat: AndroidOutputFormat.MPEG_4,
+          audioEncoder: AndroidAudioEncoder.AAC,
+          sampleRate: 44100,
+          numberOfChannels: 2,
+          bitRate: 128000,
+        },
+        ios: {
+          extension: '.wav',
+          outputFormat: IOSOutputFormat.MPEG4AAC,
+          audioQuality: IOSAudioQuality.MAX,
+          sampleRate: 44100,
+          numberOfChannels: 1,
+          bitRate: 128000,
+          linearPCMBitDepth: 16,
+          linearPCMIsBigEndian: false,
+          linearPCMIsFloat: false,
+        },
+        web: {
+          mimeType: 'audio/webm',
+          bitsPerSecond: 128000,
+        },
+      });
+      // await Audio.Recording.createAsync()
+      //   .then((res) => {
+      //     console.log('Print res at audio ', res);
+      //   })
+      //   .catch((error) => {
+      //     console.log('Some error happen', error);
+      //   });
 
       setRecording(recording);
       console.log('Recording started');
+
+      sttFromMic();
     } catch (err) {
       console.error('Failed to start recording', err);
     }
@@ -55,7 +126,6 @@ export default function HomeScreen() {
     if (status) {
       const uri = recording?.getURI();
       console.log('Recording stopped and stored at', uri);
-      const bodyFormData = new FormData();
       const result = await postSpeechToText(recording);
 
       if (result) {
@@ -98,7 +168,7 @@ export default function HomeScreen() {
               useNativeDriver: true,
               duration: 300,
             }).start();
-            startRecording();
+            sttFromMic();
           }}
         >
           <>
