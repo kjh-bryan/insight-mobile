@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { Component } from 'react';
+import 'react-native-get-random-values';
 import { Animated, StyleSheet, useColorScheme } from 'react-native';
 import { useState } from 'react';
 import { Text, View } from '../../components/Themed';
@@ -7,6 +8,9 @@ import Fonts from '../../constants/Fonts';
 import { SIZES } from '../../constants/Theme';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
+const Buffer = require('buffer').Buffer;
+import * as FileSystem from 'expo-file-system';
+
 import {
   FontAwesome,
   MaterialIcons,
@@ -26,12 +30,26 @@ import {
 import { healthCheck, postSpeechToText } from '../../services/speechtotext';
 import { SPEECH_SUBSCRIPTION_KEY, SERVICE_REGION } from '@env';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
+import { dataUriToBuffer } from 'data-uri-to-buffer';
 
 export default function HomeScreen() {
   const [showModal, setShowModal] = useState(false);
   const [recording, setRecording] = useState<Recording>();
   const scaleValue = React.useRef(new Animated.Value(0)).current;
 
+  const getBufferFromUri = async (uri: string): Promise<Buffer> => {
+    const utf8String = await FileSystem.readAsStringAsync(uri, {
+      encoding: 'base64',
+    });
+    return Buffer.from(utf8String, 'base64');
+  };
+
+  const getFileName = (uri: string): string => {
+    const urlComponents = uri.split('/');
+    const fileNameAndExtension = urlComponents[urlComponents.length - 1];
+
+    return fileNameAndExtension;
+  };
   async function sttFromMic() {
     console.log(SPEECH_SUBSCRIPTION_KEY);
     console.log(SERVICE_REGION);
@@ -39,31 +57,89 @@ export default function HomeScreen() {
       SPEECH_SUBSCRIPTION_KEY,
       SERVICE_REGION
     );
+    const recordingURI = recording?.getURI();
+    console.log('recordingURI: ', recordingURI);
+    if (recordingURI != null) {
+      const parsed = await getBufferFromUri(recordingURI);
+      const fileName = getFileName(recordingURI);
+      const audioConfig = sdk.AudioConfig.fromWavFileInput(parsed, fileName);
+      const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
 
-    const audioConfig = sdk.AudioConfig.fromWavFileInput(recording);
-    const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
-
-    recognizer.recognizeOnceAsync((result) => {
-      if (result.reason === sdk.ResultReason.RecognizedSpeech) {
-        console.log(`RECOGNIZED: Text=${result.text}`);
-      } else {
-        console.log(
-          'ERROR: Speech was cancelled or could not be recognized. Ensure your microphone is working properly.'
-        );
-      }
-    });
+      recognizer.recognizeOnceAsync((result) => {
+        console.log('recognizeOnceAsync result: ', result);
+        if (result.reason === sdk.ResultReason.RecognizedSpeech) {
+          console.log(`RECOGNIZED: Text=${result.text}`);
+        } else {
+          console.log(
+            'ERROR: Speech was cancelled or could not be recognized. Ensure your microphone is working properly.'
+          );
+        }
+      });
+    }
   }
+
+  const recognizeWith = (
+    reco: sdk.SpeechRecognizer,
+    componentRef: Component
+  ) => {
+    // Note: this is how to process the result directly rather than subscribing to the recognized event
+    // The continuation below shows how to get the same data from the final result as you'd get from the
+    // events above.
+    reco.recognizeOnceAsync(
+      (result: any) => {
+        // window.console.log(result);
+
+        let noMatchDetail: sdk.NoMatchDetails;
+        let cancelDetails: sdk.CancellationDetails;
+        let eventText = `(continuation) Reason: ${
+          sdk.ResultReason[result.reason]
+        }`;
+        switch (result.reason) {
+          case sdk.ResultReason.RecognizedSpeech:
+            eventText += ` Text: ${result.text}`;
+            break;
+          case sdk.ResultReason.NoMatch:
+            noMatchDetail = sdk.NoMatchDetails.fromResult(result);
+            eventText += ` NoMatchReason: ${
+              sdk.NoMatchReason[noMatchDetail.reason]
+            }`;
+            break;
+          case sdk.ResultReason.Canceled:
+            cancelDetails = sdk.CancellationDetails.fromResult(result);
+            eventText += ` CancellationReason: ${
+              sdk.CancellationReason[cancelDetails.reason]
+            }`;
+            if (cancelDetails.reason === sdk.CancellationReason.Error) {
+              eventText += `: ${cancelDetails.errorDetails}`;
+            }
+            break;
+          default:
+            break;
+        }
+        componentRef.setState((state: any) => ({
+          events: `${state.events}${eventText}\n`,
+          results: `${result.text}\n`,
+          recognizing: false,
+        }));
+
+        console.log('eventText : ', eventText);
+      },
+      (err: any) => {
+        componentRef.setState({ results: `ERROR: ${err}`, recognizing: false });
+      }
+    );
+  };
 
   async function startRecording() {
     try {
       console.log('Requesting permissions..');
 
-      setShowModal(true);
-      Animated.timing(scaleValue, {
-        toValue: 1,
-        useNativeDriver: true,
-        duration: 300,
-      }).start();
+      // setShowModal(true);
+      // Animated.timing(scaleValue, {
+      //   toValue: 1,
+      //   useNativeDriver: true,
+      //   duration: 300,
+      // }).start();
       // const recognizer = await sttFromMic();
 
       await Audio.requestPermissionsAsync();
@@ -109,8 +185,6 @@ export default function HomeScreen() {
 
       setRecording(recording);
       console.log('Recording started');
-
-      sttFromMic();
     } catch (err) {
       console.error('Failed to start recording', err);
     }
@@ -124,14 +198,22 @@ export default function HomeScreen() {
       allowsRecordingIOS: false,
     });
     if (status) {
-      const uri = recording?.getURI();
-      console.log('Recording stopped and stored at', uri);
-      const result = await postSpeechToText(recording);
-
-      if (result) {
-        console.log('result exist');
-        console.log(result);
+      sttFromMic();
+      // const result = await postSpeechToText(recording);
+      const recordingURI = recording?.getURI();
+      console.log('Recording stopped and stored at', recordingURI);
+      if (recordingURI != null) {
+        // const fileBuf = await getBufferFromUri(recordingURI);
+        // const file = await File;
+        // const audioConfig = sdk.AudioConfig.fromWavFileInput(
+        //   fileBuf,
+        //   recording
+        // );
       }
+      // if (result) {
+      //   console.log('result exist');
+      //   console.log(result);
+      // }
     } else {
       console.log('Recording stopped.');
     }
@@ -168,7 +250,7 @@ export default function HomeScreen() {
               useNativeDriver: true,
               duration: 300,
             }).start();
-            sttFromMic();
+            startRecording();
           }}
         >
           <>
