@@ -291,3 +291,28 @@ export const quizSubjectsData: QuizSubjectType[] = [
   quizSubject1Data,
   quizSubject2Data,
 ];
+
+export interface Card {
+  answer: string;
+  id: string;
+  question: string;
+  image?: any;
+  set: string;
+}
+
+export const getLearnCards = [
+  {
+    answer: 'Answer',
+    id: '1',
+    question: 'Questions',
+    image: null,
+    set: 'study'
+  },
+  {
+    answer: 'Answer',
+    id: '1',
+    question: 'Questions',
+    image: null,
+    set: 'study'
+  }
+]
