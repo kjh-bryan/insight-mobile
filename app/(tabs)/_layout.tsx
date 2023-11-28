@@ -94,7 +94,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="flashcard"
         options={{
-          title: 'Flash Card',
+          title: 'Flashcard',
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <TabBarMaterialCommunityIcon
               name="card-multiple-outline"
