@@ -89,7 +89,8 @@ export function SelectionModal({
         subjectCategory,
         1
       );
-
+      setSubjectTitle('');
+      setSubjectCategory('');
       setSubject(result.subject_id);
     } else {
       console.log("Form is invalid, can't create subject");

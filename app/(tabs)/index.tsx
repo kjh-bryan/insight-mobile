@@ -334,8 +334,7 @@ export default function HomeScreen() {
         <TouchableOpacity
           style={[styles.hugeButton, themeSecondaryBackgroundStyle]}
           onPress={() => {
-            // pickDocument();
-            selectSubjectOrCreateNew();
+            pickDocument();
           }}
         >
           <MaterialIcons
