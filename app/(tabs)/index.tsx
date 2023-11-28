@@ -10,6 +10,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 const Buffer = require('buffer').Buffer;
 import * as FileSystem from 'expo-file-system';
+import * as DocumentPicker from 'expo-document-picker';
 
 import {
   FontAwesome,
@@ -30,12 +31,57 @@ import {
 import { healthCheck, postSpeechToText } from '../../services/speechtotext';
 import { SPEECH_SUBSCRIPTION_KEY, SERVICE_REGION } from '@env';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
-import { dataUriToBuffer } from 'data-uri-to-buffer';
+import { createNotesBySubjectId } from '../../services/notes';
+import { formatBytes } from '../../utils/UtilsFs';
+import { LoadingModal } from '../../components/LoadingModal';
+import { ActivityIndicator } from 'react-native-paper';
+import { steps } from '../../utils/GenerateProgress';
+import { SelectionModal } from '../../components/SelectionModal';
 
 export default function HomeScreen() {
   const [showModal, setShowModal] = useState(false);
   const [recording, setRecording] = useState<Recording>();
   const scaleValue = React.useRef(new Animated.Value(0)).current;
+  const [document, setDocument] =
+    useState<DocumentPicker.DocumentPickerAsset | null>(null);
+  const [showLoadingModal, setLoadingModal] = useState(false);
+  const [loadingModalTitle, setLoadingModalTitle] = useState('');
+  const [loadingModalProgress, setLoadingModalProgress] = useState(0);
+  const [showSelectionModal, setSelectionModal] = useState(false);
+  const [progressStep, setProgressStep] = useState(0);
+  const [currentSubject, setCurrentSubject] = useState(-1);
+  const selectSubjectOrCreateNew = async () => {
+    setSelectionModal(true);
+    Animated.timing(scaleValue, {
+      toValue: 1,
+      useNativeDriver: true,
+      duration: 300,
+    }).start();
+  };
+  const handleGenerateFlashcard = async () => {
+    setLoadingModal(true);
+    setLoadingModalProgress(progressStep);
+    setLoadingModalTitle(steps[progressStep]);
+    Animated.timing(scaleValue, {
+      toValue: 1,
+      useNativeDriver: true,
+      duration: 300,
+    }).start();
+  };
+  const pickDocument = async () => {
+    try {
+      const docRes = await DocumentPicker.getDocumentAsync({
+        type: 'application/pdf',
+      });
+
+      console.log(docRes);
+      if (docRes.canceled != true) {
+        setDocument(docRes.assets[0]);
+      }
+    } catch (err) {
+      console.log('Error while selecting files ', err);
+    }
+  };
 
   const getBufferFromUri = async (uri: string): Promise<Buffer> => {
     const utf8String = await FileSystem.readAsStringAsync(uri, {
@@ -240,6 +286,27 @@ export default function HomeScreen() {
       >
         <FontAwesome name="volume-up" color={Colors.light.primary} size={50} />
       </CustomModal>
+      <LoadingModal
+        showModal={showLoadingModal}
+        setShowModal={setLoadingModal}
+        scaleValue={scaleValue}
+        stopFunction={stopRecording}
+        displayText={loadingModalTitle}
+        progress={loadingModalProgress}
+      >
+        <ActivityIndicator
+          animating={true}
+          color={Colors.default.primary}
+          size={'large'}
+        />
+      </LoadingModal>
+      <SelectionModal
+        showModal={showSelectionModal}
+        setShowModal={setSelectionModal}
+        scaleValue={scaleValue}
+        stopFunction={stopRecording}
+        setSubject={setCurrentSubject}
+      />
       <View style={[styles.hugeButtonContainer, themeBackgroundStyle]}>
         <TouchableOpacity
           style={[styles.hugeButton, themeSecondaryBackgroundStyle]}
@@ -266,6 +333,10 @@ export default function HomeScreen() {
       <View style={[styles.hugeButtonContainer, themeBackgroundStyle]}>
         <TouchableOpacity
           style={[styles.hugeButton, themeSecondaryBackgroundStyle]}
+          onPress={() => {
+            // pickDocument();
+            selectSubjectOrCreateNew();
+          }}
         >
           <MaterialIcons
             name="file-download"
@@ -275,31 +346,45 @@ export default function HomeScreen() {
           <Text style={styles.hugeButtonLabel}>Import Lecture Notes</Text>
         </TouchableOpacity>
       </View>
-      <View style={[styles.uploadFileContainer, themeBackgroundStyle]}>
-        <View style={[styles.uploadFile, themeBackgroundStyle]}>
-          <View style={[styles.uploadFileIcon, themeBackgroundStyle]}>
-            <Ionicons name="document-text" style={styles.fileIcon} />
-          </View>
-          <View style={[styles.uploadFileDescription, themeBackgroundStyle]}>
-            <Text style={[themeTextStyle]}>Database System Lecture 1</Text>
-            <Text style={[styles.fileDescriptionSubtitle, themeTextStyle]}>
-              402kb
-            </Text>
-          </View>
-          <View style={[styles.uploadFileGenerateButton, themeBackgroundStyle]}>
-            <TouchableOpacity style={styles.generateButton}>
-              <Text style={[styles.generateButtonText]} weight="bold">
-                Generate Flashcard
+
+      {document && document.size && document.name && (
+        <View style={[styles.uploadFileContainer, themeBackgroundStyle]}>
+          <View style={[styles.uploadFile, themeBackgroundStyle]}>
+            <View style={[styles.uploadFileIcon, themeBackgroundStyle]}>
+              <Ionicons name="document-text" style={styles.fileIcon} />
+            </View>
+            <View style={[styles.uploadFileDescription, themeBackgroundStyle]}>
+              <Text style={[themeTextStyle]}>{document.name}</Text>
+              <Text style={[styles.fileDescriptionSubtitle, themeTextStyle]}>
+                {formatBytes(document.size)}
               </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={[styles.uploadFileCancel, themeBackgroundStyle]}>
-            <TouchableOpacity>
-              <Entypo name="cross" style={styles.fileCancel} />
-            </TouchableOpacity>
+            </View>
+            <View
+              style={[styles.uploadFileGenerateButton, themeBackgroundStyle]}
+            >
+              <TouchableOpacity
+                style={styles.generateButton}
+                onPress={async () => {
+                  selectSubjectOrCreateNew();
+                }}
+              >
+                <Text style={[styles.generateButtonText]} weight="bold">
+                  Generate Flashcard
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={[styles.uploadFileCancel, themeBackgroundStyle]}>
+              <TouchableOpacity
+                onPress={() => {
+                  setDocument(null);
+                }}
+              >
+                <Entypo name="cross" style={styles.fileCancel} />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      )}
     </View>
   );
 }

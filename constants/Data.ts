@@ -71,53 +71,53 @@ export const notes2 = [
 ];
 
 export type SubjectType = {
-  id: string;
-  title: string;
-  category: string;
+  subject_id: string;
+  subject_title: string;
+  subject_category: string;
   notes?: NoteType[] | [];
 };
 
 export const subjectsData: SubjectType[] = [
   {
-    id: 'Main1',
-    title: 'SC2006 - Software Engineering',
-    category: 'Technology - Software Developement',
+    subject_id: 'Main1',
+    subject_title: 'SC2006 - Software Engineering',
+    subject_category: 'Technology - Software Developement',
     notes: notes1,
   },
   {
-    id: 'Main2',
-    title: 'SC1004 - Linear Algebra',
-    category: 'Mathematics',
+    subject_id: 'Main2',
+    subject_title: 'SC1004 - Linear Algebra',
+    subject_category: 'Mathematics',
     notes: notes2,
   },
   {
-    id: 'Main3',
-    title: 'SC1004 - Linear Algebra',
-    category: 'Mathematics',
+    subject_id: 'Main3',
+    subject_title: 'SC1004 - Linear Algebra',
+    subject_category: 'Mathematics',
     notes: notes2,
   },
   {
-    id: 'Main4',
-    title: 'SC1004 - Linear Algebra',
-    category: 'Mathematics',
+    subject_id: 'Main4',
+    subject_title: 'SC1004 - Linear Algebra',
+    subject_category: 'Mathematics',
     notes: notes2,
   },
   {
-    id: 'Main5',
-    title: 'SC1004 - Linear Algebra',
-    category: 'Mathematics',
+    subject_id: 'Main5',
+    subject_title: 'SC1004 - Linear Algebra',
+    subject_category: 'Mathematics',
     notes: notes2,
   },
   {
-    id: 'Main6',
-    title: 'SC1004 - Linear Algebra',
-    category: 'Mathematics',
+    subject_id: 'Main6',
+    subject_title: 'SC1004 - Linear Algebra',
+    subject_category: 'Mathematics',
     notes: notes2,
   },
   {
-    id: 'Main72',
-    title: 'SC100700 - Linear Algebra',
-    category: 'Mathematics',
+    subject_id: 'Main72',
+    subject_title: 'SC100700 - Linear Algebra',
+    subject_category: 'Mathematics',
     notes: notes2,
   },
 ];
@@ -306,13 +306,13 @@ export const getLearnCards = [
     id: '1',
     question: 'Questions',
     image: null,
-    set: 'study'
+    set: 'study',
   },
   {
     answer: 'Answer',
     id: '1',
     question: 'Questions',
     image: null,
-    set: 'study'
-  }
-]
+    set: 'study',
+  },
+];

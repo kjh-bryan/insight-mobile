@@ -40,13 +40,13 @@ export default function FlashcardScreen() {
     const newItems: SubjectType[] = [];
 
     mockedSubjects.forEach((items) => {
-      if (items.title.toLowerCase().match(text.toLowerCase())) {
+      if (items.subject_title.toLowerCase().match(text.toLowerCase())) {
         newItems.push(items);
       }
     });
     if (text) {
       const filteredList = mockedSubjects.filter((subject: SubjectType) =>
-        subject.title.toLowerCase().includes(text.toLowerCase())
+        subject.subject_title.toLowerCase().includes(text.toLowerCase())
       );
       setSubjects(filteredList);
     } else {
@@ -71,7 +71,7 @@ export default function FlashcardScreen() {
       <View style={{ flex: 6 }}>
         {/* List View */}
         <FlatList
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.subject_id}
           data={subjects}
           renderItem={({ item }: { item: SubjectType }) => (
             <TouchableWithoutFeedback
@@ -79,9 +79,9 @@ export default function FlashcardScreen() {
                 router.push({
                   pathname: '/(tabs)/flashcard/decks',
                   params: {
-                    id: item.id,
-                    category: item.category,
-                    title: item.title,
+                    id: item.subject_id,
+                    category: item.subject_category,
+                    title: item.subject_title,
                     notes: JSON.stringify(item.notes),
                   },
                 });
