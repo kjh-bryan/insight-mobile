@@ -9,15 +9,14 @@ type CardViewItemProp = {
   item: NoteType;
 };
 
-const deviceHeight = Dimensions.get('window').width;
 export function CardViewItem({ item }: CardViewItemProp) {
   return (
     <View style={styles.container}>
       <Text style={styles.itemId} weight="semibold">
-        {item.id}
+        {/* {item.note_id} */}
       </Text>
       <Text style={styles.itemTitle} weight="medium">
-        {item.noteTitle}
+        {item.note_title}
       </Text>
     </View>
   );

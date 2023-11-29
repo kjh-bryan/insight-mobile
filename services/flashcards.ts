@@ -1,8 +1,8 @@
 import client from './client';
 
-export const getNotesBySubjectId = async (subject_id: number) => {
+export const getFlashcardBySubjectId = async (subject_id: number) => {
   try {
-    const result = await client.get('/api/notes/' + subject_id);
+    const result = await client.get('/api/flashcard/' + subject_id);
     if (result.status === 200) {
       console.log('result.status');
       return result.data.data;
@@ -18,20 +18,15 @@ export const getNotesBySubjectId = async (subject_id: number) => {
   }
 };
 
-export const createNotesBySubjectId = async (
-  note_title: string,
+export const createFlashcardBySubjectId = async (
   subject_id: number,
-  file: any
+  flashcards: []
 ) => {
   try {
-    const formData = new FormData();
-    formData.append('note_title', note_title);
-    formData.append('subject_id', subject_id.toString());
-    formData.append('pdfFile', file);
-    const config = {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    };
-    const result = await client.post('/api/notes', formData, config);
+    const result = await client.post('/api/notes', {
+      subject_id,
+      flashcards,
+    });
     if (result.status === 200) {
       console.log('result.data : ', result.data.data);
       return result.data.data;

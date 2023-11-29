@@ -1,7 +1,6 @@
 export const steps = [
-  'Extracting Text from PDF.. ',
-  'Uploading PDF to Storage..',
-  'Generating Flashcards..',
+  'Uploading PDF.. Extracting Text from PDF.. Creating Note..',
+  'Generating Flashcards From PDF..',
   'Saving Flashcards..',
   'Retreiving Flash cards',
 ];

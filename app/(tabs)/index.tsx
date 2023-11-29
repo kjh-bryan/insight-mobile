@@ -37,6 +37,8 @@ import { LoadingModal } from '../../components/LoadingModal';
 import { ActivityIndicator } from 'react-native-paper';
 import { steps } from '../../utils/GenerateProgress';
 import { SelectionModal } from '../../components/SelectionModal';
+import { NewNoteModal } from '../../components/NewNoteModal';
+import { createFlashcardBySubjectId } from '../../services/flashcards';
 
 export default function HomeScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -48,26 +50,12 @@ export default function HomeScreen() {
   const [loadingModalTitle, setLoadingModalTitle] = useState('');
   const [loadingModalProgress, setLoadingModalProgress] = useState(0);
   const [showSelectionModal, setSelectionModal] = useState(false);
+  const [showNewNoteModal, setNewNoteModal] = useState(false);
   const [progressStep, setProgressStep] = useState(0);
   const [currentSubject, setCurrentSubject] = useState(-1);
-  const selectSubjectOrCreateNew = async () => {
-    setSelectionModal(true);
-    Animated.timing(scaleValue, {
-      toValue: 1,
-      useNativeDriver: true,
-      duration: 300,
-    }).start();
-  };
-  const handleGenerateFlashcard = async () => {
-    setLoadingModal(true);
-    setLoadingModalProgress(progressStep);
-    setLoadingModalTitle(steps[progressStep]);
-    Animated.timing(scaleValue, {
-      toValue: 1,
-      useNativeDriver: true,
-      duration: 300,
-    }).start();
-  };
+  const [noteTitle, setNoteTitle] = useState('');
+  const [pdfText, setPdfText] = useState([]);
+
   const pickDocument = async () => {
     try {
       const docRes = await DocumentPicker.getDocumentAsync({
@@ -77,10 +65,126 @@ export default function HomeScreen() {
       console.log(docRes);
       if (docRes.canceled != true) {
         setDocument(docRes.assets[0]);
+        const title = docRes.assets[0].name.replace('.pdf', '');
+        setNoteTitle(title);
       }
     } catch (err) {
       console.log('Error while selecting files ', err);
     }
+  };
+  const selectSubjectOrCreateNew = async () => {
+    setSelectionModal(true);
+    Animated.timing(scaleValue, {
+      toValue: 1,
+      useNativeDriver: true,
+      duration: 300,
+    }).start();
+  };
+
+  const handleSetNoteTitle = async () => {
+    console.log('handleCreateNewNote : noteTitle: ', noteTitle);
+    Animated.timing(scaleValue, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setSelectionModal(false);
+      setNewNoteModal(true);
+      Animated.timing(scaleValue, {
+        toValue: 1,
+        useNativeDriver: true,
+        duration: 300,
+      }).start(() => {});
+    });
+  };
+
+  const handleGenerateFlashcardProcess = async () => {
+    Animated.timing(scaleValue, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setNewNoteModal(false);
+
+      setLoadingModal(true);
+      setLoadingModalProgress(progressStep);
+      setLoadingModalTitle(steps[progressStep]);
+      Animated.timing(scaleValue, {
+        toValue: 1,
+        useNativeDriver: true,
+        duration: 300,
+      }).start(() => {
+        setTimeout(() => handleCreateNote(progressStep), 2000);
+      });
+    });
+  };
+  const handleCreateNote = async (progress: number) => {
+    console.log('handleCreateNote');
+    console.log('progressStep : ', progressStep);
+    const newProgress = progress + 1;
+
+    const result = await createNotesBySubjectId(
+      noteTitle,
+      currentSubject,
+      document?.uri
+    );
+
+    if (!result) {
+      Animated.timing(scaleValue, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        setLoadingModal(false);
+      });
+    } else {
+      console.log('newProgress : ', newProgress);
+      setProgressStep(newProgress);
+      console.log('After setNewProgress : ', newProgress);
+      const modalProgress = (100 / steps.length / 100) * newProgress;
+      setLoadingModalProgress(modalProgress);
+      setLoadingModalTitle(steps[newProgress]);
+      handleSendTextWithPromptGPT(newProgress, result.text);
+    }
+  };
+
+  const handleSendTextWithPromptGPT = async (
+    progress: number,
+    text: string
+  ) => {
+    // Send text with prompt
+    console.log('handleSendTextWithPromptGPT');
+    console.log('progressStep : ', progressStep);
+    const newProgress = progress + 1;
+    console.log('newProgress : ', newProgress);
+    setProgressStep(newProgress);
+    console.log('After setNewProgress : ', newProgress);
+    const modalProgress = (100 / steps.length / 100) * newProgress;
+    setLoadingModalProgress(modalProgress);
+    setLoadingModalTitle(steps[newProgress]);
+
+    // const result = await getFrontBackTextFromGPT();
+
+    console.log('After steps[newProgress] : ', steps[newProgress]);
+    setTimeout(() => handleCreateFlashcard(progress, []), 2000);
+  };
+
+  const handleCreateFlashcard = async (progress: number, flashcards: []) => {
+    console.log('handleCreateFlashcard');
+    console.log('progressStep : ', progressStep);
+
+    const result = await createFlashcardBySubjectId(currentSubject, flashcards);
+
+    const newProgress = progress + 1;
+    console.log('newProgress : ', newProgress);
+    setProgressStep(newProgress);
+    console.log('After setNewProgress : ', newProgress);
+    const modalProgress = (100 / steps.length / 100) * newProgress;
+    setLoadingModalProgress(modalProgress);
+    setLoadingModalTitle(steps[newProgress]);
+    console.log('After steps[newProgress] : ', steps[newProgress]);
+    // For each text with front end back, structure them into each flashcard front and back
+    //TODO
   };
 
   const getBufferFromUri = async (uri: string): Promise<Buffer> => {
@@ -304,8 +408,15 @@ export default function HomeScreen() {
         showModal={showSelectionModal}
         setShowModal={setSelectionModal}
         scaleValue={scaleValue}
-        stopFunction={stopRecording}
         setSubject={setCurrentSubject}
+        handleModalDismiss={handleSetNoteTitle}
+      />
+      <NewNoteModal
+        showModal={showNewNoteModal}
+        scaleValue={scaleValue}
+        noteTitle={noteTitle}
+        setNoteTitle={setNoteTitle}
+        handleModalDismiss={handleGenerateFlashcardProcess}
       />
       <View style={[styles.hugeButtonContainer, themeBackgroundStyle]}>
         <TouchableOpacity

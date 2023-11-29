@@ -10,6 +10,7 @@ import { quiz3Data, quizSubjectsData } from '../../../constants/Data';
 import { QuizViewItem } from '../../../components/QuizViewItem';
 import { QuizSubjectViewItem } from '../../../components/QuizSubjectViewItem';
 import { router } from 'expo-router';
+import { useEffect } from 'react';
 
 export default function QuizScreen() {
   const {
@@ -18,6 +19,9 @@ export default function QuizScreen() {
     themeSecondaryBackgroundStyle,
   } = ThemeUtils();
 
+  useEffect(() => {
+    console.log('in quiz');
+  }, []);
   const recentQuiz = quiz3Data[0];
   const quizzes = quizSubjectsData;
   return (

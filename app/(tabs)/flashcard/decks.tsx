@@ -41,7 +41,7 @@ export default function DecksScreen() {
 
     if (text) {
       const filteredList = JSON.parse(notes).filter((note: NoteType) =>
-        note.noteTitle.toLowerCase().includes(text.toLowerCase())
+        note.note_title.toLowerCase().includes(text.toLowerCase())
       );
       setNoteItem(filteredList);
     } else {
@@ -78,7 +78,7 @@ export default function DecksScreen() {
                     id: id,
                     category: category,
                     title: title,
-                    deckTitle: item.noteTitle,
+                    deckTitle: item.note_title,
                     notes: notes,
                   },
                 });

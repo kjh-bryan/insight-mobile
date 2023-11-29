@@ -11,10 +11,10 @@ export function ListViewItem({ item }: ListViewItemProp) {
   return (
     <View style={styles.container}>
       <Text style={styles.itemCategory} weight="semibold">
-        {item.category}
+        {item.subject_category}
       </Text>
       <Text style={styles.itemTitle} weight="medium">
-        {item.title}
+        {item.subject_title}
       </Text>
       <Text style={styles.itemSubtitle} weight="semibold">
         {item.notes?.length === 0

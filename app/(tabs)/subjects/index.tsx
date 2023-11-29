@@ -17,6 +17,7 @@ import {
 } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { getSubjectsByUserId } from '../../../services/subject';
 
 export default function SubjectsScreen() {
   const {
@@ -29,8 +30,9 @@ export default function SubjectsScreen() {
   const [subjects, setSubjects] = useState<SubjectType[]>(mockedSubjects);
   const insets = useSafeAreaInsets();
   useEffect(() => {
-    (() => {
-      setSubjects(mockedSubjects);
+    (async () => {
+      const result = await getSubjectsByUserId(1);
+      setSubjects(result.subjects);
     })();
   }, []);
 

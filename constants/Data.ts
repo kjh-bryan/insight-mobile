@@ -1,54 +1,54 @@
 export type NoteType = {
-  id: string;
-  noteTitle: string;
-  pdfUrl?: string | '';
+  note_id: string;
+  note_title: string;
+  note_url?: string | '';
 };
 
 export const notes1 = [
   {
     id: 'Note1',
-    noteTitle: 'Lecture 2 - Software Processes - Basics',
-    pdfUrl: '',
+    note_title: 'Lecture 2 - Software Processes - Basics',
+    note_url: '',
   },
   {
     id: 'Note2',
-    noteTitle: 'Lecture 3 - Agile Software Development',
-    pdfUrl: '',
+    note_title: 'Lecture 3 - Agile Software Development',
+    note_url: '',
   },
   {
     id: 'Note3',
-    noteTitle: 'Lecture 5 - Requirements',
-    pdfUrl: '',
+    note_title: 'Lecture 5 - Requirements',
+    note_url: '',
   },
   {
     id: 'Note4',
-    noteTitle: 'Lecture 5 - Requirements',
-    pdfUrl: '',
+    note_title: 'Lecture 5 - Requirements',
+    note_url: '',
   },
   {
     id: 'Note5',
-    noteTitle: 'Lecture 5 - Requirements',
-    pdfUrl: '',
+    note_title: 'Lecture 5 - Requirements',
+    note_url: '',
   },
   {
     id: 'Note6',
-    noteTitle: 'Lecture 5 - Requirements',
-    pdfUrl: '',
+    note_title: 'Lecture 5 - Requirements',
+    note_url: '',
   },
   {
     id: 'Note7',
-    noteTitle: 'Lecture 5 - Requirements',
-    pdfUrl: '',
+    note_title: 'Lecture 5 - Requirements',
+    note_url: '',
   },
   {
     id: 'Note8',
-    noteTitle: 'Lecture 5 - Requirements',
-    pdfUrl: '',
+    note_title: 'Lecture 5 - Requirements',
+    note_url: '',
   },
   {
     id: 'Note9',
-    noteTitle: 'Lecture 5 - Requirements',
-    pdfUrl: '',
+    note_title: 'Lecture 5 - Requirements',
+    note_url: '',
   },
 ];
 
@@ -82,43 +82,36 @@ export const subjectsData: SubjectType[] = [
     subject_id: 'Main1',
     subject_title: 'SC2006 - Software Engineering',
     subject_category: 'Technology - Software Developement',
-    notes: notes1,
   },
   {
     subject_id: 'Main2',
     subject_title: 'SC1004 - Linear Algebra',
     subject_category: 'Mathematics',
-    notes: notes2,
   },
   {
     subject_id: 'Main3',
     subject_title: 'SC1004 - Linear Algebra',
     subject_category: 'Mathematics',
-    notes: notes2,
   },
   {
     subject_id: 'Main4',
     subject_title: 'SC1004 - Linear Algebra',
     subject_category: 'Mathematics',
-    notes: notes2,
   },
   {
     subject_id: 'Main5',
     subject_title: 'SC1004 - Linear Algebra',
     subject_category: 'Mathematics',
-    notes: notes2,
   },
   {
     subject_id: 'Main6',
     subject_title: 'SC1004 - Linear Algebra',
     subject_category: 'Mathematics',
-    notes: notes2,
   },
   {
     subject_id: 'Main72',
     subject_title: 'SC100700 - Linear Algebra',
     subject_category: 'Mathematics',
-    notes: notes2,
   },
 ];
 

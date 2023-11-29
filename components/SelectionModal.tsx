@@ -1,4 +1,4 @@
-import React, { Ref, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -10,7 +10,6 @@ import Colors from '../constants/Colors';
 import { SIZES } from '../constants/Theme';
 import { Text } from './Themed';
 import { ThemeUtils } from '../utils/ThemeUtils';
-import * as Progress from 'react-native-progress';
 import {
   createSubjectByUserId,
   getSubjectsByUserId,
@@ -25,7 +24,7 @@ type SelectionModalProps = {
   children?: React.ReactElement;
   setSubject: React.Dispatch<React.SetStateAction<number>>;
   scaleValue?: any;
-  stopFunction?: (status: boolean) => Promise<void>;
+  handleModalDismiss?: () => void;
 };
 
 export function SelectionModal({
@@ -34,7 +33,7 @@ export function SelectionModal({
   setShowModal,
   setSubject,
   children,
-  stopFunction,
+  handleModalDismiss,
 }: SelectionModalProps) {
   const {
     themeBackgroundStyle,
@@ -54,8 +53,11 @@ export function SelectionModal({
       const getSubjects = await getSubjectsByUserId(1);
       const subject = getSubjects;
       setSubjects(subject.subjects);
-      if (subjects != undefined && subjects.length > 0) {
+      console.log('Check for undefined subjects', typeof subjects);
+      if (subjects !== null && subjects.length > 0) {
         setChoice(subjects[0].subject_id);
+      } else {
+        console.log(subjects);
       }
     })();
   }, []);
@@ -76,9 +78,15 @@ export function SelectionModal({
     }
 
     setErrors(errors);
-    setIsFormValid(Object.keys(errors).length === 0);
-    console.log(errors);
-    console.log(isFormValid);
+    setIsFormValid(
+      errors !== undefined && errors ? Object.keys(errors).length === 0 : false
+    );
+  };
+
+  const handleSetSubject = async (subject_id: number) => {
+    setSubject(subject_id);
+
+    if (handleModalDismiss) handleModalDismiss();
   };
 
   const handleCreateSubject = async () => {
@@ -91,7 +99,7 @@ export function SelectionModal({
       );
       setSubjectTitle('');
       setSubjectCategory('');
-      setSubject(result.subject_id);
+      handleSetSubject(result.subject_id);
     } else {
       console.log("Form is invalid, can't create subject");
     }
@@ -124,7 +132,7 @@ export function SelectionModal({
                     setTimeout(() => setShowModal(false), 200);
                     Animated.timing(scaleValue, {
                       toValue: 0,
-                      duration: 200,
+                      duration: 300,
                       useNativeDriver: true,
                     }).start();
                   }}
@@ -152,10 +160,10 @@ export function SelectionModal({
                 >
                   <RadioButton.Group
                     value={choice}
-                    onValueChange={(answer) => setChoice(answer)}
+                    onValueChange={(choice) => setChoice(choice)}
                   >
-                    {subjects.length > 0 &&
-                      subjects != undefined &&
+                    {subjects &&
+                      subjects !== undefined &&
                       subjects.map((subject: any) => {
                         return (
                           <RadioButton.Item
@@ -199,6 +207,15 @@ export function SelectionModal({
                     borderRadius: SIZES.base,
                     width: '80%',
                     alignItems: 'center',
+                    opacity: choice !== '' ? 1 : 0.5,
+                  }}
+                  disabled={
+                    subjects === undefined || subjects === null || choice === ''
+                      ? true
+                      : false
+                  }
+                  onPress={() => {
+                    handleSetSubject(Number(choice));
                   }}
                 >
                   <Text
@@ -282,11 +299,13 @@ export function SelectionModal({
                     Create Subject
                   </Text>
                 </TouchableOpacity>
-                {Object.values(errors).map((error: any, index) => (
-                  <Text key={index} style={styles.error}>
-                    {error}
-                  </Text>
-                ))}
+                {errors !== undefined &&
+                  errors &&
+                  Object.values(errors).map((error: any, index) => (
+                    <Text key={index} style={styles.error}>
+                      {error}
+                    </Text>
+                  ))}
               </View>
             </View>
           </ScrollView>
@@ -408,6 +427,6 @@ const styles = StyleSheet.create({
   error: {
     color: Colors.default.complementRed,
     fontSize: SIZES.h3,
-    marginTopasd: 6,
+    marginTop: 6,
   },
 });

@@ -25,11 +25,9 @@ type LoadingModalProps = {
 export function LoadingModal({
   scaleValue,
   showModal,
-  setShowModal,
   displayText,
   progress,
   children,
-  stopFunction,
 }: LoadingModalProps) {
   const {
     themeBackgroundStyle,
