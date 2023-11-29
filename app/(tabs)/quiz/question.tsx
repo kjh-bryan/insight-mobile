@@ -11,10 +11,10 @@ import Colors from '../../../constants/Colors';
 import { ToggleButton, RadioButton } from 'react-native-paper';
 
 export default function QuestionScreen() {
-  const { quizTitle, quizQuestions, recentScore } = useLocalSearchParams<{
-    quizTitle: string;
-    quizQuestions: string;
-    recentScore: string;
+  const { quiz_title, quiz_questions, quiz_score } = useLocalSearchParams<{
+    quiz_title: string;
+    quiz_questions: string;
+    quiz_score: string;
   }>();
   const {
     themeTextStyle,
@@ -22,7 +22,7 @@ export default function QuestionScreen() {
     themeSecondaryBackgroundStyle,
   } = ThemeUtils();
   const [quizQuestion, setQuizQuestions] = useState<QuestionType[]>(
-    JSON.parse(quizQuestions)
+    JSON.parse(quiz_questions)
   );
   console.log(quizQuestion);
   const [answer, setAnswer] = useState('');
@@ -38,7 +38,7 @@ export default function QuestionScreen() {
       <View style={styles.questionHeaderContainer}>
         {/* Question Title Header */}
         <Text style={styles.questionHeaderTitle} weight="medium">
-          {quizTitle}
+          {quiz_title}
         </Text>
         <Progress.Bar
           // prettier-ignore
@@ -68,10 +68,10 @@ export default function QuestionScreen() {
                     <RadioButton.Item
                       color={Colors.default.primary}
                       uncheckedColor={Colors.default.slate500}
-                      label={choice}
+                      label={choice.choice}
                       style={styles.choiceContainer}
-                      value={choice}
-                      key={choice}
+                      value={choice.choice}
+                      key={choice.choice}
                     />
                   );
                 })}
@@ -90,7 +90,7 @@ export default function QuestionScreen() {
           }
           onPress={() => {
             if (currentQuestionIndex + 1 != totalQuestion) {
-              if (answer.match(currentQuestion.answer)) {
+              if (answer.match(currentQuestion.answer?.choice)) {
                 setScore(score + 1);
               }
               setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -105,7 +105,7 @@ export default function QuestionScreen() {
               router.replace({
                 pathname: '/(tabs)/quiz/result',
                 params: {
-                  quizTitle: quizTitle,
+                  quiz_title: quiz_title,
                   score: score,
                   totalQuestion: totalQuestion,
                 },

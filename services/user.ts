@@ -1,8 +1,11 @@
 import client from './client';
 
-export const getFlashcardBySubjectId = async (subject_id: number) => {
+export const loginUser = async (username: string, password: string) => {
   try {
-    const result = await client.get('/api/flashcard/' + subject_id);
+    const result = await client.post('/api/loginuser', {
+      username,
+      password,
+    });
     if (result.status === 200) {
       console.log('result.status');
       return result.data.data;
@@ -18,14 +21,18 @@ export const getFlashcardBySubjectId = async (subject_id: number) => {
   }
 };
 
-export const createFlashcardBySubjectId = async (
-  subject_id: number,
-  flashcards: []
+export const registerUser = async (
+  username: string,
+  password: string,
+  email: string,
+  name: string
 ) => {
   try {
-    const result = await client.post('/api/flashcard', {
-      subject_id,
-      flashcards,
+    const result = await client.post('/api/registeruser', {
+      username,
+      password,
+      email,
+      name,
     });
     if (result.status === 200) {
       console.log('result.data : ', result.data.data);

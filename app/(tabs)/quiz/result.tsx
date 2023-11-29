@@ -8,8 +8,8 @@ import Colors from '../../../constants/Colors';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function ResultScreen() {
-  const { quizTitle, score, totalQuestion } = useLocalSearchParams<{
-    quizTitle: string;
+  const { quiz_title, score, totalQuestion } = useLocalSearchParams<{
+    quiz_title: string;
     score: string;
     totalQuestion: string;
   }>();
@@ -34,7 +34,7 @@ export default function ResultScreen() {
       </View>
       <View style={styles.quizDetailContainer}>
         <Text style={styles.quizDetailTitle} weight="semibold">
-          {quizTitle}
+          {quiz_title}
         </Text>
       </View>
       <View style={styles.quizScoreContainer}>

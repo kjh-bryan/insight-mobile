@@ -1,8 +1,9 @@
+import { QuestionType } from '../constants/Data';
 import client from './client';
 
-export const getFlashcardBySubjectId = async (subject_id: number) => {
+export const getQuizzesBySubjectId = async (subject_id: number) => {
   try {
-    const result = await client.get('/api/flashcard/' + subject_id);
+    const result = await client.get('/api/quiz/' + subject_id);
     if (result.status === 200) {
       console.log('result.status');
       return result.data.data;
@@ -18,14 +19,14 @@ export const getFlashcardBySubjectId = async (subject_id: number) => {
   }
 };
 
-export const createFlashcardBySubjectId = async (
+export const createQuizBySubjectId = async (
   subject_id: number,
-  flashcards: []
+  question: QuestionType[]
 ) => {
   try {
-    const result = await client.post('/api/flashcard', {
+    const result = await client.post('/api/quiz', {
       subject_id,
-      flashcards,
+      question,
     });
     if (result.status === 200) {
       console.log('result.data : ', result.data.data);

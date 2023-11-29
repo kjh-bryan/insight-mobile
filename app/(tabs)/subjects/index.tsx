@@ -27,7 +27,7 @@ export default function SubjectsScreen() {
   } = ThemeUtils();
   const [searchValue, setSearchValue] = useState('');
   const mockedSubjects = subjectsData;
-  const [subjects, setSubjects] = useState<SubjectType[]>(mockedSubjects);
+  const [subjects, setSubjects] = useState<SubjectType[]>();
   const insets = useSafeAreaInsets();
   useEffect(() => {
     (async () => {

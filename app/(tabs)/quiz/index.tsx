@@ -6,7 +6,6 @@ import Colors from '../../../constants/Colors';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { quiz3Data, quizSubjectsData } from '../../../constants/Data';
 import { QuizViewItem } from '../../../components/QuizViewItem';
 import { QuizSubjectViewItem } from '../../../components/QuizSubjectViewItem';
 import { router } from 'expo-router';
@@ -22,8 +21,8 @@ export default function QuizScreen() {
   useEffect(() => {
     console.log('in quiz');
   }, []);
-  const recentQuiz = quiz3Data[0];
-  const quizzes = quizSubjectsData;
+  const recentQuiz = [] as any;
+  const quizzes = [] as any;
   return (
     <View style={styles.container}>
       <View style={[styles.titleHeader, themeBackgroundStyle]}>
@@ -55,7 +54,7 @@ export default function QuizScreen() {
         {/* Quizes */}
         <ScrollView style={{ flex: 1 }}>
           {quizzes &&
-            quizzes.map((item) => {
+            quizzes.map((item: any) => {
               return (
                 <TouchableOpacity
                   key={item.quizSubjectTitle}

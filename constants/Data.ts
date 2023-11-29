@@ -115,16 +115,24 @@ export const subjectsData: SubjectType[] = [
   },
 ];
 
+export type ChoiceType = {
+  choice: string;
+};
+
 export type QuestionType = {
+  question_id?: number;
+  quiz_id: number;
   question: string;
-  choice: string[];
-  answer: string;
+  choice?: ChoiceType[];
+  answer: ChoiceType;
 };
 
 export type QuizType = {
-  quizTitle: string;
-  questions: QuestionType[];
-  recentScore: number;
+  quiz_id?: number;
+  quiz_title: string;
+  quiz_subject_id: number;
+  quiz_score: number;
+  questions?: QuestionType[];
 };
 
 export type QuizSubjectType = {
@@ -132,158 +140,158 @@ export type QuizSubjectType = {
   quizSubjects: QuizType[];
 };
 
-export const question1Data: QuestionType[] = [
-  {
-    question: 'What is not the principal of Agile Software Development?',
-    choice: [
-      'Following the plan',
-      'Embrance Change',
-      'Customer involvement',
-      'Incremental Delivery',
-    ],
-    answer: 'Following the plan',
-  },
-  {
-    question: 'Question 2',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer D',
-  },
-  {
-    question: 'Question 3',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer A',
-  },
-  {
-    question: 'Question 4',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer B',
-  },
-];
+// export const question1Data: QuestionType[] = [
+//   {
+//     question: 'What is not the principal of Agile Software Development?',
+//     choice: [
+//       'Following the plan',
+//       'Embrance Change',
+//       'Customer involvement',
+//       'Incremental Delivery',
+//     ],
+//     answer: 'Following the plan',
+//   },
+//   {
+//     question: 'Question 2',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer D',
+//   },
+//   {
+//     question: 'Question 3',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer A',
+//   },
+//   {
+//     question: 'Question 4',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer B',
+//   },
+// ];
 
-export const question2Data: QuestionType[] = [
-  {
-    question: 'Question 1',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer A',
-  },
-  {
-    question: 'Question 2',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer B',
-  },
-  {
-    question: 'Question 3',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer C',
-  },
-];
+// export const question2Data: QuestionType[] = [
+//   {
+//     question: 'Question 1',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer A',
+//   },
+//   {
+//     question: 'Question 2',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer B',
+//   },
+//   {
+//     question: 'Question 3',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer C',
+//   },
+// ];
 
-export const question3Data: QuestionType[] = [
-  {
-    question: 'Question 1',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer D',
-  },
-  {
-    question: 'Question 2',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer C',
-  },
-  {
-    question: 'Question 3',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer B',
-  },
-];
+// export const question3Data: QuestionType[] = [
+//   {
+//     question: 'Question 1',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer D',
+//   },
+//   {
+//     question: 'Question 2',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer C',
+//   },
+//   {
+//     question: 'Question 3',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer B',
+//   },
+// ];
 
-export const question4Data: QuestionType[] = [
-  {
-    question: 'Question 1',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer A',
-  },
-  {
-    question: 'Question 2',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer C',
-  },
-  {
-    question: 'Question 3',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer A',
-  },
-];
-export const question5Data: QuestionType[] = [
-  {
-    question: 'Question 1',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer D',
-  },
-  {
-    question: 'Question 2',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer A',
-  },
-  {
-    question: 'Question 3',
-    choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-    answer: 'Answer B',
-  },
-];
+// export const question4Data: QuestionType[] = [
+//   {
+//     question: 'Question 1',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer A',
+//   },
+//   {
+//     question: 'Question 2',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer C',
+//   },
+//   {
+//     question: 'Question 3',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer A',
+//   },
+// ];
+// export const question5Data: QuestionType[] = [
+//   {
+//     question: 'Question 1',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer D',
+//   },
+//   {
+//     question: 'Question 2',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer A',
+//   },
+//   {
+//     question: 'Question 3',
+//     choice: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+//     answer: 'Answer B',
+//   },
+// ];
 
-export const quiz1Data: QuizType[] = [
-  {
-    quizTitle: 'Lecture 3 - Agile Software Development',
-    questions: question1Data,
-    recentScore: -1,
-  },
-  {
-    quizTitle: 'Lecture 2 - Software Processes - Basics',
-    questions: question2Data,
-    recentScore: -1,
-  },
-];
+// export const quiz1Data: QuizType[] = [
+//   {
+//     quizTitle: 'Lecture 3 - Agile Software Development',
+//     questions: question1Data,
+//     recentScore: -1,
+//   },
+//   {
+//     quizTitle: 'Lecture 2 - Software Processes - Basics',
+//     questions: question2Data,
+//     recentScore: -1,
+//   },
+// ];
 
-export const quiz2Data: QuizType[] = [
-  {
-    quizTitle: 'Lecture 1 - Database Principals',
-    questions: question5Data,
-    recentScore: -1,
-  },
-  {
-    quizTitle: 'Lecture 2 - Database Designs',
-    questions: question4Data,
-    recentScore: -1,
-  },
-];
+// export const quiz2Data: QuizType[] = [
+//   {
+//     quizTitle: 'Lecture 1 - Database Principals',
+//     questions: question5Data,
+//     recentScore: -1,
+//   },
+//   {
+//     quizTitle: 'Lecture 2 - Database Designs',
+//     questions: question4Data,
+//     recentScore: -1,
+//   },
+// ];
 
-export const quiz3Data: QuizType[] = [
-  {
-    quizTitle: 'Lecture 1 - Vectors',
-    questions: question5Data,
-    recentScore: -1,
-  },
-];
+// export const quiz3Data: QuizType[] = [
+//   {
+//     quizTitle: 'Lecture 1 - Vectors',
+//     questions: question5Data,
+//     recentScore: -1,
+//   },
+// ];
 
-export const quizSubject1Data: QuizSubjectType = {
-  quizSubjectTitle: 'SC2006 - Software Engineering',
-  quizSubjects: quiz1Data,
-};
+// export const quizSubject1Data: QuizSubjectType = {
+//   quizSubjectTitle: 'SC2006 - Software Engineering',
+//   quizSubjects: quiz1Data,
+// };
 
-export const quizSubject2Data: QuizSubjectType = {
-  quizSubjectTitle: 'SC2024 - Database Systems',
-  quizSubjects: quiz2Data,
-};
+// export const quizSubject2Data: QuizSubjectType = {
+//   quizSubjectTitle: 'SC2024 - Database Systems',
+//   quizSubjects: quiz2Data,
+// };
 
-export const quizSubject3Data: QuizSubjectType = {
-  quizSubjectTitle: 'SC1004 - Linear Algebra',
-  quizSubjects: quiz3Data,
-};
+// export const quizSubject3Data: QuizSubjectType = {
+//   quizSubjectTitle: 'SC1004 - Linear Algebra',
+//   quizSubjects: quiz3Data,
+// };
 
-export const quizSubjectsData: QuizSubjectType[] = [
-  quizSubject1Data,
-  quizSubject2Data,
-];
+// export const quizSubjectsData: QuizSubjectType[] = [
+//   quizSubject1Data,
+//   quizSubject2Data,
+// ];
 
 export interface Card {
   answer: string;
