@@ -80,7 +80,9 @@ function RootLayoutNav() {
   const { themeBackgroundStyle } = ThemeUtils();
 
   return (
-    <ThemeProvider value={colorScheme === 'light' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider
+      value={colorScheme === 'light' ? DefaultTheme : DefaultTheme}
+    >
       <SafeAreaView style={{ flex: 1 }}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

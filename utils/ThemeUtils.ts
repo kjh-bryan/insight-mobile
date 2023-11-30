@@ -10,17 +10,23 @@ export type ThemeUtilProps = {
 export function ThemeUtils(): ThemeUtilProps {
   const colorScheme = useColorScheme();
 
+  // const themeTextStyle =
+  //   colorScheme === 'light' ? styles.lightColor : styles.darkColor;
   const themeTextStyle =
-    colorScheme === 'light' ? styles.lightColor : styles.darkColor;
+    colorScheme === 'light' ? styles.lightColor : styles.lightColor;
 
+  // const themeBackgroundStyle =
+  //   colorScheme === 'light' ? styles.lightBackground : styles.darkBackground;
   const themeBackgroundStyle =
-    colorScheme === 'light' ? styles.lightBackground : styles.darkBackground;
+    colorScheme === 'light' ? styles.lightBackground : styles.lightBackground;
+
+  // const themeSecondaryBackgroundStyle =
+  //   colorScheme === 'light'
+  //     ? styles.lightBackground
+  //     : styles.secondaryDarkBackground;
 
   const themeSecondaryBackgroundStyle =
-    colorScheme === 'light'
-      ? styles.lightBackground
-      : styles.secondaryDarkBackground;
-
+    colorScheme === 'light' ? styles.lightBackground : styles.lightBackground;
   return {
     themeTextStyle,
     themeBackgroundStyle,
@@ -38,9 +44,9 @@ const styles = StyleSheet.create({
   darkBackground: {
     backgroundColor: Colors.dark.background,
   },
-  secondaryDarkBackground: {
-    backgroundColor: Colors.dark.secondaryBackground,
-  },
+  // secondaryDarkBackground: {
+  //   backgroundColor: Colors.dark.secondaryBackground,
+  // },
   lightColor: {
     color: Colors.light.text,
   },

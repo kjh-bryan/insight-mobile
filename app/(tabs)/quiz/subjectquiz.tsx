@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View } from '../../../components/Themed';
 import { router, useLocalSearchParams } from 'expo-router';
 import { QuizType } from '../../../constants/Data';
@@ -11,9 +11,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { QuizViewItem } from '../../../components/QuizViewItem';
 
 export default function SubjectQuizScreen() {
-  const { quizSubjectTitle, quizSubjects } = useLocalSearchParams<{
-    quizSubjectTitle: string;
-    quizSubjects: string;
+  const { subject_title, quizzes } = useLocalSearchParams<{
+    subject_title: string;
+    quizzes: string;
   }>();
   const {
     themeTextStyle,
@@ -21,14 +21,16 @@ export default function SubjectQuizScreen() {
     themeSecondaryBackgroundStyle,
   } = ThemeUtils();
   const [quizSubject, setQuizSubjects] = useState<QuizType[]>(
-    JSON.parse(quizSubjects)
+    quizzes ? JSON.parse(quizzes) : []
   );
 
-  console.log(quizSubject);
+  useEffect(() => {
+    (async () => {})();
+  });
   return (
     <View style={styles.container}>
       <View style={styles.quizTitleContainer}>
-        <Text style={styles.quizTitle}>{quizSubjectTitle}</Text>
+        <Text style={styles.quizTitle}>{subject_title}</Text>
       </View>
       <View style={styles.quizzesContainer}>
         <Text style={styles.quizzesTitle}>Quiz</Text>
@@ -41,14 +43,14 @@ export default function SubjectQuizScreen() {
                     router.push({
                       pathname: '/(tabs)/quiz/question',
                       params: {
-                        quizTitle: quiz.quizTitle,
-                        quizQuestions: JSON.stringify(quiz.questions),
-                        recentScore: quiz.recentScore,
+                        quiz_title: subject_title,
+                        questions: JSON.stringify(quiz.questions),
+                        quiz_score: quiz.quiz_score,
                       },
                     });
                   }}
                 >
-                  <QuizViewItem item={quiz}></QuizViewItem>
+                  <QuizViewItem key={quiz.quiz_id} item={quiz}></QuizViewItem>
                 </TouchableOpacity>
               );
             })}

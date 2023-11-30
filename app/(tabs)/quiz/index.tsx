@@ -9,9 +9,12 @@ import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { QuizViewItem } from '../../../components/QuizViewItem';
 import { QuizSubjectViewItem } from '../../../components/QuizSubjectViewItem';
 import { router } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { getQuizzesByUserId } from '../../../services/quiz';
 
 export default function QuizScreen() {
+  const [quizzes, setQuizzes] = useState([]);
+
   const {
     themeTextStyle,
     themeBackgroundStyle,
@@ -19,10 +22,15 @@ export default function QuizScreen() {
   } = ThemeUtils();
 
   useEffect(() => {
-    console.log('in quiz');
+    (async () => {
+      const quizzes = await getQuizzesByUserId(1);
+      setQuizzes(quizzes.subjects);
+      console.log(quizzes.subjects);
+    })();
   }, []);
   const recentQuiz = [] as any;
-  const quizzes = [] as any;
+
+  const quizze = [] as any;
   return (
     <View style={styles.container}>
       <View style={[styles.titleHeader, themeBackgroundStyle]}>
@@ -31,8 +39,7 @@ export default function QuizScreen() {
           <Text style={styles.titleColor}>knowledge</Text>
         </Text>
       </View>
-      <View style={styles.recentQuizContainer}>
-        {/* Recent quiz */}
+      {/* <View style={styles.recentQuizContainer}>
         <Text style={styles.subtitle}>Recent Quiz</Text>
         <TouchableOpacity
           onPress={() => {
@@ -48,7 +55,7 @@ export default function QuizScreen() {
         >
           <QuizViewItem item={recentQuiz} />
         </TouchableOpacity>
-      </View>
+      </View> */}
       <View style={{ flex: 2.3 }}>
         <Text style={{ marginVertical: 10 }}>Continue Studying</Text>
         {/* Quizes */}
@@ -57,13 +64,13 @@ export default function QuizScreen() {
             quizzes.map((item: any) => {
               return (
                 <TouchableOpacity
-                  key={item.quizSubjectTitle}
+                  key={item.subject_title}
                   onPress={() => {
                     router.push({
                       pathname: '/(tabs)/quiz/subjectquiz',
                       params: {
-                        quizSubjectTitle: item.quizSubjectTitle,
-                        quizSubjects: JSON.stringify(item.quizSubjects),
+                        subject_title: item.subject_title,
+                        quizzes: quizzes ? JSON.stringify(item.quizzes) : [],
                       },
                     });
                   }}

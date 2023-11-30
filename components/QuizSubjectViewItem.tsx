@@ -17,10 +17,10 @@ export function QuizSubjectViewItem({ item }: QuizSubjectViewItemProp) {
       <View style={styles.container}>
         <View style={styles.itemContainer}>
           <Text style={styles.itemTitle} weight="semibold">
-            {item.quizSubjectTitle}
+            {item.subject_title}
           </Text>
           <Text style={styles.itemLectures} weight="medium">
-            {item.quizSubjects.length + ' Lectures Quiz'}
+            {item.quizzes.length + ' Lectures Quiz'}
           </Text>
         </View>
         <View style={styles.itemIconContainer}>

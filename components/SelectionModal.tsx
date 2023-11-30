@@ -59,6 +59,7 @@ export function SelectionModal({
       } else {
         console.log(subjects);
       }
+      console.log('end');
     })();
   }, []);
 

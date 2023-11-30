@@ -14,13 +14,28 @@ export default function NotesPdfScreen() {
   console.log('src :', src);
   console.log('title :', title);
   // return <PDFReader src={src} title={title} />;
-  const pdfResource = { uri: src, cache: true };
-  //return (
-  // <View style={styles.container}>
-  //   <Text style={styles.container}>{title}</Text>
-  //   <Pdf trustAllCerts={true} source={pdfResource} style={styles.pdf} />
-  // </View>
-  //);
+  const pdfResource = {
+    uri: 'https://insightpdfstorage.blob.core.windows.net/pdf/6049526822544522-Brighton-Connection-.pdf',
+    cache: true,
+  };
+  return (
+    <View style={styles.container}>
+      <Text weight="bold" style={styles.title}>
+        {title}
+      </Text>
+      <Pdf
+        trustAllCerts={false}
+        source={pdfResource}
+        style={styles.pdf}
+        onLoadComplete={(numberOfPages, filePath) => {
+          console.log(`Number of pages: ${numberOfPages}`);
+        }}
+        onError={(error) => {
+          console.log('error :', error);
+        }}
+      />
+    </View>
+  );
   return (
     <View>
       <Text>Helllo</Text>
@@ -33,7 +48,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: SIZES.h2,
+    fontSize: SIZES.h3,
+    textAlign: 'center',
+    borderWidth: 1,
+    marginVertical: 5,
+    paddingVertical: 10,
   },
   pdf: {
     flex: 1,

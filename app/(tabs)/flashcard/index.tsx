@@ -68,7 +68,7 @@ export default function FlashcardScreen() {
           onChangeText={(text) => handleSearchInput(text)}
         />
       </View>
-      <View style={{ flex: 6 }}>
+      <View style={{ flex: 7 }}>
         {/* List View */}
         <FlatList
           keyExtractor={(item) => item.subject_id}

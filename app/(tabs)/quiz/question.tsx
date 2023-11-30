@@ -11,9 +11,9 @@ import Colors from '../../../constants/Colors';
 import { ToggleButton, RadioButton } from 'react-native-paper';
 
 export default function QuestionScreen() {
-  const { quiz_title, quiz_questions, quiz_score } = useLocalSearchParams<{
+  const { quiz_title, questions, quiz_score } = useLocalSearchParams<{
     quiz_title: string;
-    quiz_questions: string;
+    questions: string;
     quiz_score: string;
   }>();
   const {
@@ -22,7 +22,7 @@ export default function QuestionScreen() {
     themeSecondaryBackgroundStyle,
   } = ThemeUtils();
   const [quizQuestion, setQuizQuestions] = useState<QuestionType[]>(
-    JSON.parse(quiz_questions)
+    questions ? JSON.parse(questions) : []
   );
   console.log(quizQuestion);
   const [answer, setAnswer] = useState('');

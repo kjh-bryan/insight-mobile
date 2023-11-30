@@ -136,8 +136,8 @@ export type QuizType = {
 };
 
 export type QuizSubjectType = {
-  quizSubjectTitle: string;
-  quizSubjects: QuizType[];
+  subject_title: string;
+  quizzes: QuizType[];
 };
 
 // export const question1Data: QuestionType[] = [
