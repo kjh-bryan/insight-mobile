@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Card, getLearnCards } from '../../../constants/Data';
+import { FlashcardItem, getLearnCards } from '../../../constants/Data';
 import { defaultStyleSheet } from '../../../constants/Styles';
 import Animated, {
   interpolate,
@@ -21,19 +21,26 @@ const Page = () => {
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
   } = ThemeUtils();
-  const { id, category, title, deckTitle, notes } = useLocalSearchParams<{
-    id: string;
-    category: string;
-    title: string;
-    deckTitle: string;
-    notes: string;
+  const {
+    subject_id,
+    subject_category,
+    subject_title,
+    flashcard_title,
+    flashcard_item,
+  } = useLocalSearchParams<{
+    subject_id: string;
+    subject_category: string;
+    subject_title: string;
+    flashcard_title: string;
+    flashcard_item: string;
   }>();
-  const [cards, setCards] = useState<Card[]>([]);
+  const [cards, setCards] = useState<FlashcardItem[]>(
+    JSON.parse(flashcard_item)
+  );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFront, setShowFront] = useState(true);
   const [textHidden, setTextHidden] = useState(false);
   const [endSession, setEndSession] = useState(false);
-
   const rotate = useSharedValue(0);
   const frontAnimatedStyles = useAnimatedStyle(() => {
     const rotateValue = interpolate(rotate.value, [0, 1], [0, 180]);
@@ -56,14 +63,6 @@ const Page = () => {
       ],
     };
   });
-
-  useEffect(() => {
-    const loadCards = async () => {
-      const cards = getLearnCards
-      setCards(cards);
-    };
-    loadCards();
-  }, []);
 
   // Rotate the card
   const onShowAnswer = () => {
@@ -90,17 +89,21 @@ const Page = () => {
   };
 
   return (
-    <View style={[defaultStyleSheet.container, themeBackgroundStyle ]}>
+    <View style={[defaultStyleSheet.container, themeBackgroundStyle]}>
       {cards.length > 0 && (
         <>
           <View style={styles.container}>
             <View style={styles.questionHeaderTitle}>
               <Text style={[defaultStyleSheet.header, themeTextStyle]}>
-                {deckTitle}
+                {flashcard_title}
               </Text>
             </View>
             <Animated.View style={[styles.frontcard, frontAnimatedStyles]}>
-              <LearnCard card={cards[currentIndex]} isFront={true} textHidden={textHidden} />
+              <LearnCard
+                card={cards[currentIndex]}
+                isFront={true}
+                textHidden={textHidden}
+              />
             </Animated.View>
             <Animated.View style={[styles.backCard, backAnimatedStyles]}>
               <LearnCard card={cards[currentIndex]} isFront={false} />
@@ -114,29 +117,37 @@ const Page = () => {
                 color={Colors.default.primary}
                 style={styles.questionProgressBar}
               />
-              <Text style={[styles.questionProgress, themeTextStyle]} >
+              <Text style={[styles.questionProgress, themeTextStyle]}>
                 {currentIndex + 1} / {cards.length}
               </Text>
             </View>
             {showFront && (
-              <TouchableOpacity style={defaultStyleSheet.bottomButton} onPress={onShowAnswer}>
+              <TouchableOpacity
+                style={defaultStyleSheet.bottomButton}
+                onPress={onShowAnswer}
+              >
                 <Text style={defaultStyleSheet.buttonText}>Reveal Answer</Text>
               </TouchableOpacity>
             )}
 
-            {!showFront && !endSession &&(
-              <TouchableOpacity style={defaultStyleSheet.bottomButton} onPress={() => onNextCard()}>
+            {!showFront && !endSession && (
+              <TouchableOpacity
+                style={defaultStyleSheet.bottomButton}
+                onPress={() => onNextCard()}
+              >
                 <Text style={defaultStyleSheet.buttonText}>Next Question</Text>
               </TouchableOpacity>
             )}
 
-            {endSession &&(
-                <TouchableOpacity style={defaultStyleSheet.bottomButton}
+            {endSession && (
+              <TouchableOpacity
+                style={defaultStyleSheet.bottomButton}
                 onPress={() => {
                   router.back();
-                }}>
-                  <Text style={defaultStyleSheet.buttonText}>End session</Text>
-                </TouchableOpacity>
+                }}
+              >
+                <Text style={defaultStyleSheet.buttonText}>End session</Text>
+              </TouchableOpacity>
             )}
           </View>
         </>
@@ -159,7 +170,7 @@ const styles = StyleSheet.create({
   backCard: {
     position: 'absolute',
     backfaceVisibility: 'hidden',
-    marginTop: 150
+    marginTop: 150,
   },
   bottomView: {
     position: 'absolute',
@@ -176,7 +187,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   progressContainer: {
-    top: 335
+    top: 335,
   },
   questionProgress: {
     fontSize: SIZES.h5,
@@ -184,8 +195,8 @@ const styles = StyleSheet.create({
   questionHeaderTitle: {
     width: 300,
     alignItems: 'center',
-    height: 200
-  }
+    height: 200,
+  },
 });
 
 export default Page;

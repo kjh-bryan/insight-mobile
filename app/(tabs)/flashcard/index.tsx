@@ -8,7 +8,11 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-import { subjectsData, SubjectType } from '../../../constants/Data';
+import {
+  SubjectFlashcardType,
+  subjectsData,
+  SubjectType,
+} from '../../../constants/Data';
 import { ListViewItem } from '../../../components/ListViewItem';
 import Colors from '../../../constants/Colors';
 import {
@@ -17,41 +21,45 @@ import {
 } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useIsFocused } from '@react-navigation/native';
+import { getFlashcardsByUserId } from '../../../services/flashcards';
+import { DeckListViewItem } from '../../../components/DeckListViewItem';
 
 export default function FlashcardScreen() {
-  const {
-    themeTextStyle,
-    themeBackgroundStyle,
-    themeSecondaryBackgroundStyle,
-  } = ThemeUtils();
   const [searchValue, setSearchValue] = useState('');
-  const mockedSubjects = subjectsData;
-  const [subjects, setSubjects] = useState<SubjectType[]>(mockedSubjects);
-  const insets = useSafeAreaInsets();
+  const [subjects, setSubjects] = useState<SubjectFlashcardType[]>();
+  const [unfilteredSubjects, setUnfilteredSubjects] =
+    useState<SubjectFlashcardType[]>();
+  const isFocused = useIsFocused();
   useEffect(() => {
-    (() => {
-      setSubjects(mockedSubjects);
+    (async () => {
+      const result = await getFlashcardsByUserId(1);
+      console.log('Flashcard Screen result :', result);
+      setSubjects(result.subjects);
+      setUnfilteredSubjects(result.subjects);
     })();
-  }, []);
+  }, [isFocused]);
 
   const handleSearchInput = (text: string) => {
     setSearchValue(text);
     // Show list view on text
     const newItems: SubjectType[] = [];
 
-    mockedSubjects.forEach((items) => {
-      if (items.subject_title.toLowerCase().match(text.toLowerCase())) {
-        newItems.push(items);
+    if (subjects)
+      subjects.forEach((items) => {
+        if (items.subject_title.toLowerCase().match(text.toLowerCase())) {
+          newItems.push(items);
+        }
+      });
+    if (subjects)
+      if (text) {
+        const filteredList = subjects.filter((subject: SubjectFlashcardType) =>
+          subject.subject_title.toLowerCase().includes(text.toLowerCase())
+        );
+        setSubjects(filteredList);
+      } else {
+        setSubjects(unfilteredSubjects);
       }
-    });
-    if (text) {
-      const filteredList = mockedSubjects.filter((subject: SubjectType) =>
-        subject.subject_title.toLowerCase().includes(text.toLowerCase())
-      );
-      setSubjects(filteredList);
-    } else {
-      setSubjects(mockedSubjects);
-    }
     setSubjects(newItems);
     console.log(subjects);
   };
@@ -73,21 +81,23 @@ export default function FlashcardScreen() {
         <FlatList
           keyExtractor={(item) => item.subject_id}
           data={subjects}
-          renderItem={({ item }: { item: SubjectType }) => (
+          renderItem={({ item }: { item: SubjectFlashcardType }) => (
             <TouchableWithoutFeedback
               onPress={() => {
                 router.push({
                   pathname: '/(tabs)/flashcard/decks',
                   params: {
-                    id: item.subject_id,
-                    category: item.subject_category,
-                    title: item.subject_title,
-                    notes: JSON.stringify(item.notes),
+                    subject_id: item.subject_id,
+                    subject_category: item.subject_category,
+                    subject_title: item.subject_title,
+                    flashcards: item.flashcards
+                      ? JSON.stringify(item.flashcards)
+                      : '',
                   },
                 });
               }}
             >
-              <ListViewItem item={item} />
+              <DeckListViewItem item={item} />
             </TouchableWithoutFeedback>
           )}
         />

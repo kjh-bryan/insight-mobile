@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Text, View } from '../../../components/Themed';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
 import { SIZES } from '../../../constants/Theme';
@@ -8,7 +8,11 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-import { subjectsData, SubjectType } from '../../../constants/Data';
+import {
+  SubjectNoteType,
+  subjectsData,
+  SubjectType,
+} from '../../../constants/Data';
 import { ListViewItem } from '../../../components/ListViewItem';
 import Colors from '../../../constants/Colors';
 import {
@@ -17,7 +21,8 @@ import {
 } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { getSubjectsByUserId } from '../../../services/subject';
+import { getNotesByUserId } from '../../../services/notes';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function SubjectsScreen() {
   const {
@@ -26,34 +31,41 @@ export default function SubjectsScreen() {
     themeSecondaryBackgroundStyle,
   } = ThemeUtils();
   const [searchValue, setSearchValue] = useState('');
-  const mockedSubjects = subjectsData;
   const [subjects, setSubjects] = useState<SubjectType[]>();
-  const insets = useSafeAreaInsets();
+  const [unfilteredSubjectsNote, setUnfilteredSubjectsNote] =
+    useState<SubjectType[]>();
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     (async () => {
-      const result = await getSubjectsByUserId(1);
+      const result = await getNotesByUserId(1);
+      console.log('SubjectsScreen result :', result);
       setSubjects(result.subjects);
+      setUnfilteredSubjectsNote(result.subjects);
     })();
-  }, []);
+  }, [isFocused]);
 
   const handleSearchInput = (text: string) => {
     setSearchValue(text);
     // Show list view on text
     const newItems: SubjectType[] = [];
 
-    mockedSubjects.forEach((items) => {
-      if (items.subject_title.toLowerCase().match(text.toLowerCase())) {
-        newItems.push(items);
+    if (unfilteredSubjectsNote)
+      unfilteredSubjectsNote.forEach((items) => {
+        if (items.subject_title.toLowerCase().match(text.toLowerCase())) {
+          newItems.push(items);
+        }
+      });
+    if (unfilteredSubjectsNote)
+      if (text) {
+        const filteredList = unfilteredSubjectsNote.filter(
+          (subject: SubjectType) =>
+            subject.subject_title.toLowerCase().includes(text.toLowerCase())
+        );
+        setSubjects(filteredList);
+      } else {
+        setSubjects(unfilteredSubjectsNote);
       }
-    });
-    if (text) {
-      const filteredList = mockedSubjects.filter((subject: SubjectType) =>
-        subject.subject_title.toLowerCase().includes(text.toLowerCase())
-      );
-      setSubjects(filteredList);
-    } else {
-      setSubjects(mockedSubjects);
-    }
     setSubjects(newItems);
     console.log(subjects);
   };
@@ -75,7 +87,7 @@ export default function SubjectsScreen() {
         <FlatList
           keyExtractor={(item) => item.subject_id}
           data={subjects}
-          renderItem={({ item }: { item: SubjectType }) => (
+          renderItem={({ item }: { item: SubjectNoteType }) => (
             <TouchableWithoutFeedback
               onPress={() => {
                 router.push({

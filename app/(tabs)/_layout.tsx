@@ -84,7 +84,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="subjects"
         options={{
-          title: 'Subjects',
+          title: 'Notes',
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <TabBarSimpleLineIcon name="notebook" color={color} />

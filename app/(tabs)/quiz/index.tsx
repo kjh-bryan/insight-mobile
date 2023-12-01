@@ -66,7 +66,7 @@ export default function QuizScreen() {
             quizzes.map((item: any) => {
               return (
                 <TouchableOpacity
-                  key={item.subject_title}
+                  key={item.subject_id}
                   onPress={() => {
                     router.push({
                       pathname: '/(tabs)/quiz/subjectquiz',

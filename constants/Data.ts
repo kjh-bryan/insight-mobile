@@ -74,9 +74,15 @@ export type SubjectType = {
   subject_id: string;
   subject_title: string;
   subject_category: string;
-  notes?: NoteType[] | [];
 };
 
+export interface SubjectFlashcardType extends SubjectType {
+  flashcards?: Flashcard[];
+}
+
+export interface SubjectNoteType extends SubjectType {
+  notes?: NoteType[];
+}
 export const subjectsData: SubjectType[] = [
   {
     subject_id: 'Main1',
@@ -293,12 +299,17 @@ export type QuizSubjectType = {
 //   quizSubject2Data,
 // ];
 
-export interface Card {
-  answer: string;
-  id: string;
-  question: string;
+export interface Flashcard {
+  flashcard_id?: number;
+  flashcard_title: string;
+  subject_id: number;
+  flashcard_item?: FlashcardItem[];
+}
+export interface FlashcardItem {
+  flashcard_id?: string;
+  flashcard_front: string;
+  flashcard_back: string;
   image?: any;
-  set: string;
 }
 
 export const getLearnCards = [
@@ -307,7 +318,6 @@ export const getLearnCards = [
     id: '1',
     question: 'Questions',
     image: null,
-    set: 'study',
   },
   {
     answer: 'Answer',

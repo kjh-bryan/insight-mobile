@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text, View } from '../../../components/Themed';
 import { useLocalSearchParams } from 'expo-router';
-import { NoteType } from '../../../constants/Data';
+import { Flashcard, FlashcardItem, NoteType } from '../../../constants/Data';
 import { SIZES } from '../../../constants/Theme';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
 import {
@@ -13,15 +13,22 @@ import {
 import Colors from '../../../constants/Colors';
 import { CardViewItem } from '../../../components/CardViewItem';
 import { router } from 'expo-router';
+import { FlashCardItem } from '../../../components/FlashCardItem';
 
 export default function DecksScreen() {
-  const { id, category, title, notes } = useLocalSearchParams<{
-    id: string;
-    category: string;
-    title: string;
-    notes: string;
-  }>();
-  const [noteItems, setNoteItem] = useState<NoteType[]>(JSON.parse(notes));
+  const { subject_id, subject_category, subject_title, flashcards } =
+    useLocalSearchParams<{
+      subject_id: string;
+      subject_category: string;
+      subject_title: string;
+      flashcards: string;
+    }>();
+  const [flashcardItems, setFlashcardItems] = useState<Flashcard[]>(
+    JSON.parse(flashcards)
+  );
+  const [unfilteredFlashcardItems, setUnfilteredFlashcardItems] = useState<
+    Flashcard[]
+  >(JSON.parse(flashcards));
   const {
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
@@ -31,7 +38,8 @@ export default function DecksScreen() {
 
   useEffect(() => {
     (() => {
-      setNoteItem(JSON.parse(notes));
+      setFlashcardItems(JSON.parse(flashcards));
+      setUnfilteredFlashcardItems(JSON.parse(flashcards));
     })();
   }, []);
 
@@ -40,20 +48,21 @@ export default function DecksScreen() {
     // Show list view on text
 
     if (text) {
-      const filteredList = JSON.parse(notes).filter((note: NoteType) =>
-        note.note_title.toLowerCase().includes(text.toLowerCase())
+      const filteredList = unfilteredFlashcardItems.filter(
+        (flashcard: Flashcard) =>
+          flashcard.flashcard_title.toLowerCase().includes(text.toLowerCase())
       );
-      setNoteItem(filteredList);
+      setFlashcardItems(filteredList);
     } else {
-      setNoteItem(JSON.parse(notes));
+      setFlashcardItems(unfilteredFlashcardItems);
     }
   };
 
   return (
     <View style={[styles.container]}>
-      <Text style={[styles.subjectTitle, themeTextStyle]}>{title}</Text>
+      <Text style={[styles.subjectTitle, themeTextStyle]}>{subject_title}</Text>
       <Text weight="semibold" style={styles.categoryTitle}>
-        {category}
+        {subject_category}
       </Text>
       <TextInput
         style={styles.searchInput}
@@ -68,23 +77,25 @@ export default function DecksScreen() {
             flexWrap: 'wrap',
             justifyContent: 'space-between',
           }}
-          data={noteItems}
-          renderItem={({ item }) => (
+          data={flashcardItems}
+          renderItem={({ item }: { item: Flashcard }) => (
             <TouchableOpacity
               onPress={() => {
                 router.push({
                   pathname: '/(tabs)/flashcard/card',
                   params: {
-                    id: id,
-                    category: category,
-                    title: title,
-                    deckTitle: item.note_title,
-                    notes: notes,
+                    subject_id: subject_id,
+                    subject_category: subject_category,
+                    subject_title: subject_title,
+                    flashcard_title: item.flashcard_title,
+                    flashcard_item: item.flashcard_item
+                      ? JSON.stringify(item.flashcard_item)
+                      : '',
                   },
                 });
               }}
             >
-              <CardViewItem item={item} />
+              <FlashCardItem item={item} />
             </TouchableOpacity>
           )}
         />
