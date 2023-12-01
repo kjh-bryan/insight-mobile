@@ -77,12 +77,12 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
-  const { themeBackgroundStyle } = ThemeUtils();
-
   return (
     <ThemeProvider value={colorScheme === 'light' ? DarkTheme : DefaultTheme}>
       <SafeAreaView style={{ flex: 1 }}>
-        <Stack>
+        <Stack initialRouteName='index'>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(access)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
       </SafeAreaView>

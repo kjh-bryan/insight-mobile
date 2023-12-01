@@ -19,11 +19,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 export default function FlashcardScreen() {
-  const {
-    themeTextStyle,
-    themeBackgroundStyle,
-    themeSecondaryBackgroundStyle,
-  } = ThemeUtils();
   const [searchValue, setSearchValue] = useState('');
   const mockedSubjects = subjectsData;
   const [subjects, setSubjects] = useState<SubjectType[]>(mockedSubjects);
