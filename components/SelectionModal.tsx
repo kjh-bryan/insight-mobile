@@ -18,6 +18,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { RadioButton, TextInput } from 'react-native-paper';
 import { SubjectType } from '../constants/Data';
 import { Entypo } from '@expo/vector-icons';
+import { useIsFocused } from '@react-navigation/native';
 type SelectionModalProps = {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -47,7 +48,7 @@ export function SelectionModal({
   const [subjectCategory, setSubjectCategory] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState({});
-
+  const isFocused = useIsFocused();
   useEffect(() => {
     (async () => {
       const getSubjects = await getSubjectsByUserId(1);
@@ -61,7 +62,7 @@ export function SelectionModal({
       }
       console.log('end');
     })();
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     setErrors({});

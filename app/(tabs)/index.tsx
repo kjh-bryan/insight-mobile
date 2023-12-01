@@ -39,6 +39,7 @@ import { steps } from '../../utils/GenerateProgress';
 import { SelectionModal } from '../../components/SelectionModal';
 import { NewNoteModal } from '../../components/NewNoteModal';
 import { createFlashcardBySubjectId } from '../../services/flashcards';
+import { formatFrontBackFromOpenAI } from '../../services/openai';
 
 export default function HomeScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -144,14 +145,12 @@ export default function HomeScreen() {
       const modalProgress = (100 / steps.length / 100) * newProgress;
       setLoadingModalProgress(modalProgress);
       setLoadingModalTitle(steps[newProgress]);
-      handleSendTextWithPromptGPT(newProgress, result.text);
+      console.log('result text : ', result.text);
+      // handleSendTextWithPromptGPT(newProgress, result.text);
     }
   };
 
-  const handleSendTextWithPromptGPT = async (
-    progress: number,
-    text: string
-  ) => {
+  const handleSendTextWithPromptGPT = async (progress: number, text: []) => {
     // Send text with prompt
     console.log('handleSendTextWithPromptGPT');
     console.log('progressStep : ', progressStep);
@@ -163,8 +162,8 @@ export default function HomeScreen() {
     setLoadingModalProgress(modalProgress);
     setLoadingModalTitle(steps[newProgress]);
 
-    // const result = await getFrontBackTextFromGPT();
-
+    const result = await formatFrontBackFromOpenAI(text);
+    console.log('result from formatFrontBack :', result);
     console.log('After steps[newProgress] : ', steps[newProgress]);
     setTimeout(() => handleCreateFlashcard(progress, []), 2000);
   };
@@ -173,7 +172,11 @@ export default function HomeScreen() {
     console.log('handleCreateFlashcard');
     console.log('progressStep : ', progressStep);
 
-    const result = await createFlashcardBySubjectId(currentSubject, flashcards);
+    const result = await createFlashcardBySubjectId(
+      currentSubject,
+      noteTitle,
+      flashcards
+    );
 
     const newProgress = progress + 1;
     console.log('newProgress : ', newProgress);
