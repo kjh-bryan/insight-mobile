@@ -3,7 +3,7 @@ import client from './client';
 
 export const getQuizzesByUserId = async (user_id: number) => {
   try {
-    const result = await client.get('/api/subjectquiz/' + user_id);
+    const result = await client.get('/api/subjects/quiz/' + user_id);
     if (result.status === 200) {
       console.log('result.status');
       return result.data.data;

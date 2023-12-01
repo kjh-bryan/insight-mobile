@@ -1,5 +1,23 @@
 import client from './client';
 
+export const getNotesByUserId = async (user_id: number) => {
+  try {
+    const result = await client.get('/api/subjects/note/' + user_id);
+    if (result.status === 200) {
+      console.log('result.status');
+      return result.data.data;
+    } else {
+      return null;
+    }
+  } catch (error: any) {
+    const { response } = error;
+    if (response?.data) {
+      return response.data;
+    }
+    return { error: error.message || error };
+  }
+};
+
 export const getNotesBySubjectId = async (subject_id: number) => {
   try {
     const result = await client.get('/api/notes/' + subject_id);

@@ -27,6 +27,7 @@ export default function QuizScreen() {
       const quizzes = await getQuizzesByUserId(1);
       setQuizzes(quizzes.subjects);
       console.log(quizzes.subjects);
+      console.log('QuizScreen - isFocused :', isFocused);
     })();
   }, [isFocused]);
   const recentQuiz = [] as any;
