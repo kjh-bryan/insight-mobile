@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Touchable, TouchableOpacity } from 'react-native';
 import { Text, View } from '../../../components/Themed';
 import { SIZES } from '../../../constants/Theme';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
-import { QuestionType } from '../../../constants/Data';
+import { ChoiceType, QuestionType } from '../../../constants/Data';
 import { ScrollView } from 'react-native-gesture-handler';
 import * as Progress from 'react-native-progress';
 import Colors from '../../../constants/Colors';
 import { ToggleButton, RadioButton } from 'react-native-paper';
 
 export default function QuestionScreen() {
-  const { quiz_title, questions, quiz_score } = useLocalSearchParams<{
+  const { quiz_id, quiz_title, questions, quiz_score } = useLocalSearchParams<{
+    quiz_id: string;
     quiz_title: string;
     questions: string;
     quiz_score: string;
@@ -24,7 +25,6 @@ export default function QuestionScreen() {
   const [quizQuestion, setQuizQuestions] = useState<QuestionType[]>(
     questions ? JSON.parse(questions) : []
   );
-  console.log(quizQuestion);
   const [answer, setAnswer] = useState('');
   const [score, setScore] = useState(0);
   const totalQuestion = quizQuestion.length;
@@ -33,6 +33,18 @@ export default function QuestionScreen() {
   const [currentQuestion, setCurrentQuestion] = useState<QuestionType>(
     quizQuestion[currentQuestionIndex]
   );
+
+  const [currentQuestionAnswer, setCurrentQuestionAnswer] = useState('');
+
+  useEffect(() => {
+    for (const c of currentQuestion.choice) {
+      if (c.correct) {
+        setCurrentQuestionAnswer(c.choice_id.toString());
+        break;
+      }
+    }
+  }, [currentQuestion]);
+
   return (
     <View style={styles.container}>
       <View style={styles.questionHeaderContainer}>
@@ -70,8 +82,8 @@ export default function QuestionScreen() {
                       uncheckedColor={Colors.default.slate500}
                       label={choice.choice}
                       style={styles.choiceContainer}
-                      value={choice.choice}
-                      key={choice.choice}
+                      value={choice.choice_id.toString()}
+                      key={choice.choice_id}
                     />
                   );
                 })}
@@ -90,23 +102,46 @@ export default function QuestionScreen() {
           }
           onPress={() => {
             if (currentQuestionIndex + 1 != totalQuestion) {
-              if (answer.match(currentQuestion.answer?.choice)) {
+              if (currentQuestionAnswer.match(answer)) {
                 setScore(score + 1);
               }
+              console.log(
+                'On press : currentQuestion :',
+                currentQuestion.question
+              );
+              console.log('On press : currentChoiceId :', answer);
+              console.log(
+                'On press : correctAnwerChoice :',
+                currentQuestionAnswer
+              );
               setCurrentQuestionIndex(currentQuestionIndex + 1);
               setCurrentQuestion(quizQuestion[currentQuestionIndex + 1]);
               setAnswer('');
             } else {
               //TODO: Show result page
+              let finalScore = score;
+              if (currentQuestionAnswer.match(answer)) {
+                finalScore = score + 1;
+              }
               console.log(
-                'Congrats you scored :' + score + '/' + totalQuestion
+                'On press : currentQuestion :',
+                currentQuestion.question
+              );
+              console.log('On press : currentChoiceId :', answer);
+              console.log(
+                'On press : correctAnwerChoice :',
+                currentQuestionAnswer
+              );
+              console.log(
+                'Congrats you scored :' + finalScore + '/' + totalQuestion
               );
 
               router.replace({
                 pathname: '/(tabs)/quiz/result',
                 params: {
+                  quiz_id: quiz_id,
                   quiz_title: quiz_title,
-                  score: score,
+                  score: finalScore,
                   totalQuestion: totalQuestion,
                 },
               });

@@ -71,6 +71,7 @@ export default function QuizScreen() {
                     router.push({
                       pathname: '/(tabs)/quiz/subjectquiz',
                       params: {
+                        subject_id: item.subject_id,
                         subject_title: item.subject_title,
                         quizzes: quizzes ? JSON.stringify(item.quizzes) : [],
                       },

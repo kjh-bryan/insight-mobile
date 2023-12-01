@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View } from '../../../components/Themed';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { QuizType } from '../../../constants/Data';
 import { StyleSheet } from 'react-native';
 import { SIZES } from '../../../constants/Theme';
@@ -9,21 +9,28 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { QuizViewItem } from '../../../components/QuizViewItem';
+import { useIsFocused } from '@react-navigation/native';
+import { getQuizzesBySubjectId } from '../../../services/quiz';
 
 export default function SubjectQuizScreen() {
-  const { subject_title, quizzes } = useLocalSearchParams<{
+  const { subject_id, subject_title } = useLocalSearchParams<{
+    subject_id: string;
     subject_title: string;
-    quizzes: string;
   }>();
   const {
     themeTextStyle,
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
   } = ThemeUtils();
-  const [quizSubject, setQuizSubjects] = useState<QuizType[]>(
-    quizzes ? JSON.parse(quizzes) : []
-  );
-
+  const [quizSubject, setQuizSubjects] = useState<QuizType[]>();
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    (async () => {
+      const quizzes = await getQuizzesBySubjectId(Number(subject_id));
+      console.log('SubjectQuizScreen : quzizes : ', quizzes);
+      setQuizSubjects(quizzes.quizzes);
+    })();
+  }, [isFocused]);
   return (
     <View style={styles.container}>
       <View style={styles.quizTitleContainer}>
@@ -36,6 +43,7 @@ export default function SubjectQuizScreen() {
             quizSubject.map((quiz) => {
               return (
                 <TouchableOpacity
+                  key={quiz.quiz_id}
                   onPress={() => {
                     router.push({
                       pathname: '/(tabs)/quiz/question',

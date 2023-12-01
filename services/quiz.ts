@@ -70,6 +70,7 @@ export const updateQuizScoreByQuizId = async (
       quiz_id,
       quiz_score,
     });
+    console.log('[updateQuizScoreByQuizId] result :', result);
     if (result.status === 200) {
       console.log('result.data : ', result.data.data);
       return result.data.data;

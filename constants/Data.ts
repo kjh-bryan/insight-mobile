@@ -122,15 +122,17 @@ export const subjectsData: SubjectType[] = [
 ];
 
 export type ChoiceType = {
+  choice_id: number;
+  question_id: number;
   choice: string;
+  correct: boolean;
 };
 
 export type QuestionType = {
   question_id?: number;
   quiz_id: number;
   question: string;
-  choice?: ChoiceType[];
-  answer: ChoiceType;
+  choice: ChoiceType[];
 };
 
 export type QuizType = {
