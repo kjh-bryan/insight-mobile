@@ -11,6 +11,7 @@ import { QuizSubjectViewItem } from '../../../components/QuizSubjectViewItem';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { getQuizzesByUserId } from '../../../services/quiz';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function QuizScreen() {
   const [quizzes, setQuizzes] = useState([]);
@@ -20,14 +21,14 @@ export default function QuizScreen() {
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
   } = ThemeUtils();
-
+  const isFocused = useIsFocused();
   useEffect(() => {
     (async () => {
       const quizzes = await getQuizzesByUserId(1);
       setQuizzes(quizzes.subjects);
       console.log(quizzes.subjects);
     })();
-  }, []);
+  }, [isFocused]);
   const recentQuiz = [] as any;
 
   const quizze = [] as any;

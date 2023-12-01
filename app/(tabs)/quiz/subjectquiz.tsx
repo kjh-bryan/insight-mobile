@@ -24,9 +24,6 @@ export default function SubjectQuizScreen() {
     quizzes ? JSON.parse(quizzes) : []
   );
 
-  useEffect(() => {
-    (async () => {})();
-  });
   return (
     <View style={styles.container}>
       <View style={styles.quizTitleContainer}>
@@ -43,6 +40,7 @@ export default function SubjectQuizScreen() {
                     router.push({
                       pathname: '/(tabs)/quiz/question',
                       params: {
+                        quiz_id: quiz.quiz_id ?? '',
                         quiz_title: subject_title,
                         questions: JSON.stringify(quiz.questions),
                         quiz_score: quiz.quiz_score,
