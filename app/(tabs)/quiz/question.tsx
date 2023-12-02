@@ -9,12 +9,12 @@ import { ScrollView } from 'react-native-gesture-handler';
 import * as Progress from 'react-native-progress';
 import Colors from '../../../constants/Colors';
 import { ToggleButton, RadioButton } from 'react-native-paper';
+import { getQuestionByQuizId } from '../../../services/quiz';
 
 export default function QuestionScreen() {
-  const { quiz_id, quiz_title, questions, quiz_score } = useLocalSearchParams<{
+  const { quiz_id, quiz_title, quiz_score } = useLocalSearchParams<{
     quiz_id: string;
     quiz_title: string;
-    questions: string;
     quiz_score: string;
   }>();
   const {
@@ -22,25 +22,38 @@ export default function QuestionScreen() {
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
   } = ThemeUtils();
-  const [quizQuestion, setQuizQuestions] = useState<QuestionType[]>(
-    questions ? JSON.parse(questions) : []
-  );
+  const [quizQuestion, setQuizQuestions] = useState<QuestionType[]>();
   const [answer, setAnswer] = useState('');
   const [score, setScore] = useState(0);
-  const totalQuestion = quizQuestion.length;
+  const [totalQuestion, setTotalQuestion] = useState(-1);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   console.log((100 / totalQuestion / 100) * (currentQuestionIndex + 1));
-  const [currentQuestion, setCurrentQuestion] = useState<QuestionType>(
-    quizQuestion[currentQuestionIndex]
-  );
+  const [currentQuestion, setCurrentQuestion] = useState<QuestionType>();
 
   const [currentQuestionAnswer, setCurrentQuestionAnswer] = useState('');
+  useEffect(() => {
+    (async () => {
+      console.log('quiz_id in question.tsx : ', quiz_id);
+      const result = await getQuestionByQuizId(Number(quiz_id));
+
+      console.log(result);
+      setQuizQuestions(result.questions);
+      setTotalQuestion(result.questions.length);
+    })();
+  }, []);
 
   useEffect(() => {
-    for (const c of currentQuestion.choice) {
-      if (c.correct) {
-        setCurrentQuestionAnswer(c.choice_id.toString());
-        break;
+    if (quizQuestion) setCurrentQuestion(quizQuestion[currentQuestionIndex]);
+
+    console.log(quizQuestion);
+  }, [quizQuestion]);
+  useEffect(() => {
+    if (currentQuestion) {
+      for (const c of currentQuestion.choice) {
+        if (c.correct) {
+          setCurrentQuestionAnswer(c.choice_id.toString());
+          break;
+        }
       }
     }
   }, [currentQuestion]);
@@ -67,14 +80,17 @@ export default function QuestionScreen() {
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View style={styles.questionsContainer}>
             {/* Question */}
-            <Text style={styles.questionTitle}>{currentQuestion.question}</Text>
+            <Text style={styles.questionTitle}>
+              {currentQuestion?.question}
+            </Text>
           </View>
           <View style={styles.questionChoicesContainer}>
             <RadioButton.Group
               value={answer}
               onValueChange={(answer) => setAnswer(answer)}
             >
-              {currentQuestion.choice &&
+              {currentQuestion &&
+                currentQuestion.choice &&
                 currentQuestion.choice.map((choice) => {
                   return (
                     <RadioButton.Item
@@ -105,17 +121,14 @@ export default function QuestionScreen() {
               if (currentQuestionAnswer.match(answer)) {
                 setScore(score + 1);
               }
-              console.log(
-                'On press : currentQuestion :',
-                currentQuestion.question
-              );
               console.log('On press : currentChoiceId :', answer);
               console.log(
                 'On press : correctAnwerChoice :',
                 currentQuestionAnswer
               );
               setCurrentQuestionIndex(currentQuestionIndex + 1);
-              setCurrentQuestion(quizQuestion[currentQuestionIndex + 1]);
+              if (quizQuestion)
+                setCurrentQuestion(quizQuestion[currentQuestionIndex + 1]);
               setAnswer('');
             } else {
               //TODO: Show result page
@@ -123,10 +136,6 @@ export default function QuestionScreen() {
               if (currentQuestionAnswer.match(answer)) {
                 finalScore = score + 1;
               }
-              console.log(
-                'On press : currentQuestion :',
-                currentQuestion.question
-              );
               console.log('On press : currentChoiceId :', answer);
               console.log(
                 'On press : correctAnwerChoice :',

@@ -73,7 +73,14 @@ export default function HomeScreen() {
 
       console.log(docRes);
       if (docRes.canceled != true) {
-        setDocument(docRes.assets[0]);
+        const file = docRes.assets[0];
+        const document = {
+          name: file.name,
+          size: file.size,
+          uri: file.uri,
+          type: file.mimeType,
+        };
+        setDocument(document);
         const title = docRes.assets[0].name.replace('.pdf', '');
         setNoteTitle(title);
       }
@@ -135,7 +142,7 @@ export default function HomeScreen() {
     const result = await createNotesBySubjectId(
       noteTitle,
       currentSubject,
-      document?.uri
+      document
     );
 
     if (!result) {
@@ -148,7 +155,7 @@ export default function HomeScreen() {
       setLoadingModalProgress(modalProgress);
       setLoadingModalTitle(steps[newProgress]);
       console.log('result text : ', result.text);
-      // handleSendTextWithPromptGPT(newProgress, result.text);
+      handleSendTextWithPromptGPT(newProgress, result.text);
     }
   };
 
@@ -157,6 +164,7 @@ export default function HomeScreen() {
     console.log('handleSendTextWithPromptGPT');
     const result = await formatFrontBackFromOpenAI(text);
 
+    console.log('[handleSendTextWithPromptGPT result ] : ', result);
     if (!result) {
       handleOnErrorLoadingModal('Failed to generate flashcards');
     } else {
@@ -171,7 +179,7 @@ export default function HomeScreen() {
 
       console.log('result from formatFrontBack :', result);
       console.log('After steps[newProgress] : ', steps[newProgress]);
-      handleCreateFlashcard(newProgress, result, text);
+      handleCreateFlashcard(newProgress, result.result, text);
     }
   };
 
@@ -221,7 +229,7 @@ export default function HomeScreen() {
       setLoadingModalProgress(modalProgress);
       setLoadingModalTitle(steps[newProgress]);
       console.log('After steps[newProgress] : ', steps[newProgress]);
-      handleSaveQuizToDB(newProgress, text_chunk);
+      handleSaveQuizToDB(newProgress, result.result);
     }
   };
 
@@ -246,7 +254,7 @@ export default function HomeScreen() {
     const newProgress = progress + 1;
     const modalProgress = (100 / steps.length / 100) * newProgress;
     setProgressStep(newProgress);
-    setLoadingModalTitle(steps[progress + 1]);
+    setLoadingModalTitle(steps[newProgress]);
     setLoadingModalProgress(modalProgress);
     setTimeout(() => {
       Animated.timing(scaleValue, {
@@ -489,7 +497,13 @@ export default function HomeScreen() {
         displayText={loadingModalTitle}
         animationRef={animationRef}
         progress={loadingModalProgress}
-      />
+      >
+        <ActivityIndicator
+          animating={true}
+          color={Colors.default.primary}
+          size={'large'}
+        />
+      </LoadingModal>
       <SuccessModal
         showModal={showSuccessModal}
         setShowModal={setSuccessModal}
@@ -498,11 +512,7 @@ export default function HomeScreen() {
         displayText={'Success!'}
         animationRef={animationRef}
       />
-      {/* <ActivityIndicator
-          animating={true}
-          color={Colors.default.primary}
-          size={'large'}
-        /> */}
+
       <SelectionModal
         showModal={showSelectionModal}
         setShowModal={setSelectionModal}
@@ -517,7 +527,7 @@ export default function HomeScreen() {
         setNoteTitle={setNoteTitle}
         handleModalDismiss={handleGenerateFlashcardProcess}
       />
-      <View style={[styles.hugeButtonContainer, themeBackgroundStyle]}>
+      {/* <View style={[styles.hugeButtonContainer, themeBackgroundStyle]}>
         <TouchableOpacity
           style={[styles.hugeButton, themeSecondaryBackgroundStyle]}
           onPress={() => {
@@ -539,7 +549,7 @@ export default function HomeScreen() {
             <Text style={styles.hugeButtonLabel}>Listen to Lecture</Text>
           </>
         </TouchableOpacity>
-      </View>
+      </View> */}
       <View style={[styles.hugeButtonContainer, themeBackgroundStyle]}>
         <TouchableOpacity
           style={[styles.hugeButton, themeSecondaryBackgroundStyle]}

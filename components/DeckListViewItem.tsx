@@ -17,9 +17,9 @@ export function DeckListViewItem({ item }: DeckListViewItemProp) {
         {item.subject_title}
       </Text>
       <Text style={styles.itemSubtitle} weight="semibold">
-        {item.flashcard?.length === 0
-          ? `${item.flashcard?.length} flashcard`
-          : `${item.flashcard?.length} flashcards`}
+        {item.flashcards?.length === 0
+          ? `${item.flashcards?.length} flashcard`
+          : `${item.flashcards?.length} flashcards`}
       </Text>
     </View>
   );

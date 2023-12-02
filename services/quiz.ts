@@ -23,7 +23,25 @@ export const getQuizzesBySubjectId = async (subject_id: number) => {
   try {
     const result = await client.get('/api/quiz/' + subject_id);
     if (result.status === 200) {
-      console.log('result.status');
+      console.log('result.status', result.data);
+      return result.data.data;
+    } else {
+      return null;
+    }
+  } catch (error: any) {
+    const { response } = error;
+    if (response?.data) {
+      return response.data;
+    }
+    return { error: error.message || error };
+  }
+};
+
+export const getQuestionByQuizId = async (quiz_id: number) => {
+  try {
+    const result = await client.get('/api/question/' + quiz_id);
+    if (result.status === 200) {
+      console.log('result.status', result.data);
       return result.data.data;
     } else {
       return null;

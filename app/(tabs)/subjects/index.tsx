@@ -96,7 +96,6 @@ export default function SubjectsScreen() {
                     id: item.subject_id,
                     category: item.subject_category,
                     title: item.subject_title,
-                    notes: JSON.stringify(item.notes),
                   },
                 });
               }}
@@ -108,7 +107,7 @@ export default function SubjectsScreen() {
       </View>
       <View style={{ flex: 1.5 }}>
         {/* Import Lecture Notes */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.button, themeSecondaryBackgroundStyle]}
         >
           <MaterialIcons
@@ -117,7 +116,7 @@ export default function SubjectsScreen() {
             color={Colors.light.primary}
           />
           <Text style={styles.buttonLabel}>Import Lecture Notes</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

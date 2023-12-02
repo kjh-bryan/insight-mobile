@@ -12,15 +12,16 @@ import {
 } from 'react-native-gesture-handler';
 import Colors from '../../../constants/Colors';
 import { CardViewItem } from '../../../components/CardViewItem';
+import { getNotesBySubjectId } from '../../../services/notes';
 
 export default function NotesScreen() {
-  const { id, category, title, notes } = useLocalSearchParams<{
+  const { id, category, title } = useLocalSearchParams<{
     id: string;
     category: string;
     title: string;
-    notes: string;
   }>();
-  const [noteItems, setNoteItem] = useState<NoteType[]>(JSON.parse(notes));
+  const [noteItems, setNoteItem] = useState<NoteType[]>();
+  const [unfilteredNoteItems, setUnfilteredNoteItem] = useState<NoteType[]>();
   const {
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
@@ -29,9 +30,11 @@ export default function NotesScreen() {
   const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
-    (() => {
-      setNoteItem(JSON.parse(notes));
-      console.log('n : ', noteItems);
+    (async () => {
+      const result = await getNotesBySubjectId(Number(id));
+
+      setNoteItem(result.result);
+      setUnfilteredNoteItem(result.result);
     })();
   }, []);
 
@@ -40,12 +43,12 @@ export default function NotesScreen() {
     // Show list view on text
 
     if (text) {
-      const filteredList = JSON.parse(notes).filter((note: NoteType) =>
+      const filteredList = unfilteredNoteItems?.filter((note: NoteType) =>
         note.note_title.toLowerCase().includes(text.toLowerCase())
       );
       setNoteItem(filteredList);
     } else {
-      setNoteItem(JSON.parse(notes));
+      setNoteItem(unfilteredNoteItems);
     }
   };
 
@@ -82,6 +85,7 @@ export default function NotesScreen() {
                   },
                 });
               }}
+              disabled={item.note_url == null}
             >
               <CardViewItem item={item} />
             </TouchableOpacity>
