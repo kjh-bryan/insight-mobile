@@ -326,6 +326,10 @@ export const getLearnCards = [
     id: '1',
     question: 'Questions',
     image: null,
-    set: 'study',
-  },
-];
+    set: 'study'
+  }
+]
+
+export const imagesDataURL = [
+  'https://i.ibb.co/W29btXp/profile.jpg'
+]
