@@ -44,6 +44,7 @@ export const createFlashcardBySubjectId = async (
   try {
     const result = await client.post('/api/flashcard', {
       subject_id,
+      flashcard_title,
       flashcards,
     });
     if (result.status === 200) {

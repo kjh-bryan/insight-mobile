@@ -39,12 +39,14 @@ export const getQuizzesBySubjectId = async (subject_id: number) => {
 
 export const createQuizBySubjectId = async (
   subject_id: number,
-  question: QuestionType[]
+  quiz_title: string,
+  quiz: []
 ) => {
   try {
     const result = await client.post('/api/quiz', {
       subject_id,
-      question,
+      quiz_title,
+      quiz,
     });
     if (result.status === 200) {
       console.log('result.data : ', result.data.data);

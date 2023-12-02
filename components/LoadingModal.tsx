@@ -1,4 +1,4 @@
-import React, { Ref } from 'react';
+import React, { Ref, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -11,6 +11,8 @@ import { SIZES } from '../constants/Theme';
 import { Text } from './Themed';
 import { ThemeUtils } from '../utils/ThemeUtils';
 import * as Progress from 'react-native-progress';
+import Lottie from 'lottie-react-native';
+import { Easing } from 'react-native-reanimated';
 
 type LoadingModalProps = {
   showModal: boolean;
@@ -20,6 +22,7 @@ type LoadingModalProps = {
   children?: React.ReactElement;
   scaleValue?: any;
   stopFunction?: (status: boolean) => Promise<void>;
+  animationRef: any;
 };
 
 export function LoadingModal({
@@ -28,13 +31,26 @@ export function LoadingModal({
   displayText,
   progress,
   children,
+  animationRef,
 }: LoadingModalProps) {
   const {
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
     themeTextStyle,
   } = ThemeUtils();
+  const animation = useRef<Lottie>(null);
 
+  useEffect(() => {
+    // You can control the ref programmatically, rather than using autoPlay
+    // animation.current?.play();
+    // animation.current?.reset();
+    // animation.current?.play();
+  }, []);
+
+  useEffect(() => {
+    // animationRef.current.play();
+    // console.log('loadingassets :', loadingAnimationAsset.assets);
+  }, []);
   console.log('progress :', progress);
   return (
     <Modal transparent visible={showModal}>
@@ -48,7 +64,13 @@ export function LoadingModal({
         >
           <View style={styles.modalTopContainer}>
             <View style={{ alignItems: 'center' }}></View>
-            <View style={{ alignItems: 'center' }}>{children}</View>
+            <View style={{ alignItems: 'center' }}>
+              <Lottie
+                ref={animation}
+                style={{ width: 50, height: 50 }}
+                source={require('../assets/images/loading.gif')}
+              />
+            </View>
             <Text style={[styles.modalSubtitle, themeTextStyle]}>
               {displayText}
             </Text>

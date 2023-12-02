@@ -29,7 +29,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.kjhbryan.insightmobile",
-      "versionCode": 6,
+      "versionCode": 7,
       "permissions": [
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
@@ -45,7 +45,15 @@
     "plugins": [
       "expo-router",
       "@config-plugins/react-native-blob-util",
-      "@config-plugins/react-native-pdf"
+      "@config-plugins/react-native-pdf",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "newArchEnabled": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

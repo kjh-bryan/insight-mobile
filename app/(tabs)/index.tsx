@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useRef, useEffect } from 'react';
 import 'react-native-get-random-values';
 import { Animated, StyleSheet, useColorScheme } from 'react-native';
 import { useState } from 'react';
@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const Buffer = require('buffer').Buffer;
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
+import LottieView from 'lottie-react-native';
 
 import {
   FontAwesome,
@@ -39,7 +40,11 @@ import { steps } from '../../utils/GenerateProgress';
 import { SelectionModal } from '../../components/SelectionModal';
 import { NewNoteModal } from '../../components/NewNoteModal';
 import { createFlashcardBySubjectId } from '../../services/flashcards';
-import { formatFrontBackFromOpenAI } from '../../services/openai';
+import {
+  formatFrontBackFromOpenAI,
+  formatQuestionAnswerFromOpenAI,
+} from '../../services/openai';
+import { createQuizBySubjectId } from '../../services/quiz';
 
 export default function HomeScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -47,7 +52,7 @@ export default function HomeScreen() {
   const scaleValue = React.useRef(new Animated.Value(0)).current;
   const [document, setDocument] =
     useState<DocumentPicker.DocumentPickerAsset | null>(null);
-  const [showLoadingModal, setLoadingModal] = useState(false);
+  const [showLoadingModal, setLoadingModal] = useState(true);
   const [loadingModalTitle, setLoadingModalTitle] = useState('');
   const [loadingModalProgress, setLoadingModalProgress] = useState(0);
   const [showSelectionModal, setSelectionModal] = useState(false);
@@ -56,7 +61,15 @@ export default function HomeScreen() {
   const [currentSubject, setCurrentSubject] = useState(-1);
   const [noteTitle, setNoteTitle] = useState('');
   const [pdfText, setPdfText] = useState([]);
+  const animationRef = useRef<LottieView>(null);
 
+  useEffect(() => {
+    Animated.timing(scaleValue, {
+      toValue: 1,
+      useNativeDriver: true,
+      duration: 300,
+    }).start();
+  }, []);
   const pickDocument = async () => {
     try {
       const docRes = await DocumentPicker.getDocumentAsync({
@@ -131,13 +144,7 @@ export default function HomeScreen() {
     );
 
     if (!result) {
-      Animated.timing(scaleValue, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => {
-        setLoadingModal(false);
-      });
+      handleOnErrorLoadingModal('Failed to create note..');
     } else {
       console.log('newProgress : ', newProgress);
       setProgressStep(newProgress);
@@ -146,29 +153,38 @@ export default function HomeScreen() {
       setLoadingModalProgress(modalProgress);
       setLoadingModalTitle(steps[newProgress]);
       console.log('result text : ', result.text);
-      // handleSendTextWithPromptGPT(newProgress, result.text);
+      handleSendTextWithPromptGPT(newProgress, result.text);
     }
   };
 
   const handleSendTextWithPromptGPT = async (progress: number, text: []) => {
     // Send text with prompt
     console.log('handleSendTextWithPromptGPT');
-    console.log('progressStep : ', progressStep);
-    const newProgress = progress + 1;
-    console.log('newProgress : ', newProgress);
-    setProgressStep(newProgress);
-    console.log('After setNewProgress : ', newProgress);
-    const modalProgress = (100 / steps.length / 100) * newProgress;
-    setLoadingModalProgress(modalProgress);
-    setLoadingModalTitle(steps[newProgress]);
-
     const result = await formatFrontBackFromOpenAI(text);
-    console.log('result from formatFrontBack :', result);
-    console.log('After steps[newProgress] : ', steps[newProgress]);
-    setTimeout(() => handleCreateFlashcard(progress, []), 2000);
+
+    if (!result) {
+      handleOnErrorLoadingModal('Failed to generate flashcards');
+    } else {
+      console.log('progressStep : ', progressStep);
+      const newProgress = progress + 1;
+      console.log('newProgress : ', newProgress);
+      setProgressStep(newProgress);
+      console.log('After setNewProgress : ', newProgress);
+      const modalProgress = (100 / steps.length / 100) * newProgress;
+      setLoadingModalProgress(modalProgress);
+      setLoadingModalTitle(steps[newProgress]);
+
+      console.log('result from formatFrontBack :', result);
+      console.log('After steps[newProgress] : ', steps[newProgress]);
+      handleCreateFlashcard(newProgress, result, text);
+    }
   };
 
-  const handleCreateFlashcard = async (progress: number, flashcards: []) => {
+  const handleCreateFlashcard = async (
+    progress: number,
+    flashcards: [],
+    text_chunk: []
+  ) => {
     console.log('handleCreateFlashcard');
     console.log('progressStep : ', progressStep);
 
@@ -177,19 +193,90 @@ export default function HomeScreen() {
       noteTitle,
       flashcards
     );
-
-    const newProgress = progress + 1;
-    console.log('newProgress : ', newProgress);
-    setProgressStep(newProgress);
-    console.log('After setNewProgress : ', newProgress);
-    const modalProgress = (100 / steps.length / 100) * newProgress;
-    setLoadingModalProgress(modalProgress);
-    setLoadingModalTitle(steps[newProgress]);
-    console.log('After steps[newProgress] : ', steps[newProgress]);
-    // For each text with front end back, structure them into each flashcard front and back
-    //TODO
+    if (!result) {
+      handleOnErrorLoadingModal('Failed to save flashcards');
+    } else {
+      const newProgress = progress + 1;
+      console.log('newProgress : ', newProgress);
+      setProgressStep(newProgress);
+      console.log('After setNewProgress : ', newProgress);
+      const modalProgress = (100 / steps.length / 100) * newProgress;
+      setLoadingModalProgress(modalProgress);
+      setLoadingModalTitle(steps[newProgress]);
+      console.log('After steps[newProgress] : ', steps[newProgress]);
+      handleGenerateQuizWithGPT(newProgress, text_chunk);
+    }
   };
 
+  const handleGenerateQuizWithGPT = async (
+    progress: number,
+    text_chunk: []
+  ) => {
+    console.log('handleGenerateQuizWithGPT');
+    const result = await formatQuestionAnswerFromOpenAI(text_chunk);
+
+    if (!result) {
+      handleOnErrorLoadingModal('Failed to generate quiz');
+    } else {
+      const newProgress = progress + 1;
+      console.log('newProgress : ', newProgress);
+      setProgressStep(newProgress);
+      console.log('After setNewProgress : ', newProgress);
+      const modalProgress = (100 / steps.length / 100) * newProgress;
+      setLoadingModalProgress(modalProgress);
+      setLoadingModalTitle(steps[newProgress]);
+      console.log('After steps[newProgress] : ', steps[newProgress]);
+      handleSaveQuizToDB(newProgress, text_chunk);
+    }
+  };
+
+  const handleSaveQuizToDB = async (progress: number, quiz: []) => {
+    console.log('handleSaveQuizToDB');
+    const result = await createQuizBySubjectId(currentSubject, noteTitle, quiz);
+    if (!result) {
+      handleOnErrorLoadingModal('Failed to save quiz');
+    } else {
+      const newProgress = progress + 1;
+      console.log('newProgress : ', newProgress);
+      setProgressStep(newProgress);
+      console.log('After setNewProgress : ', newProgress);
+      const modalProgress = (100 / steps.length / 100) * newProgress;
+      setLoadingModalProgress(modalProgress);
+      setLoadingModalTitle(steps[newProgress]);
+      console.log('After steps[newProgress] : ', steps[newProgress]);
+      handleFinalProgress(newProgress);
+    }
+  };
+  const handleFinalProgress = async (progress: number) => {
+    const newProgress = progress + 1;
+    const modalProgress = (100 / steps.length / 100) * newProgress;
+    setProgressStep(newProgress);
+    setLoadingModalTitle(steps[progress + 1]);
+    setLoadingModalProgress(modalProgress);
+    animationRef.current?.reset();
+    animationRef.current?.play();
+    setTimeout(() => {
+      Animated.timing(scaleValue, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        setLoadingModal(false);
+      });
+    }, 2000);
+  };
+
+  const handleOnErrorLoadingModal = async (error: string) => {
+    setLoadingModalTitle(error);
+    setTimeout(() => {}, 1000);
+    Animated.timing(scaleValue, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setLoadingModal(false);
+    });
+  };
   const getBufferFromUri = async (uri: string): Promise<Buffer> => {
     const utf8String = await FileSystem.readAsStringAsync(uri, {
       encoding: 'base64',
@@ -399,14 +486,14 @@ export default function HomeScreen() {
         scaleValue={scaleValue}
         stopFunction={stopRecording}
         displayText={loadingModalTitle}
+        animationRef={animationRef}
         progress={loadingModalProgress}
-      >
-        <ActivityIndicator
+      />
+      {/* <ActivityIndicator
           animating={true}
           color={Colors.default.primary}
           size={'large'}
-        />
-      </LoadingModal>
+        /> */}
       <SelectionModal
         showModal={showSelectionModal}
         setShowModal={setSelectionModal}
