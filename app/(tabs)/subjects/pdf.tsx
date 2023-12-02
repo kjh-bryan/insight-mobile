@@ -15,7 +15,7 @@ export default function NotesPdfScreen() {
   console.log('title :', title);
   // return <PDFReader src={src} title={title} />;
   const pdfResource = {
-    uri: 'https://insightpdfstorage.blob.core.windows.net/pdf/6049526822544522-Brighton-Connection-.pdf',
+    uri: src,
     cache: true,
   };
   return (

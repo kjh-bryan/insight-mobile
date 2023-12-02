@@ -26,8 +26,6 @@ export default function QuizScreen() {
     (async () => {
       const quizzes = await getQuizzesByUserId(1);
       setQuizzes(quizzes.subjects);
-      console.log(quizzes.subjects);
-      console.log('QuizScreen - isFocused :', isFocused);
     })();
   }, [isFocused]);
   const recentQuiz = [] as any;
@@ -73,7 +71,6 @@ export default function QuizScreen() {
                       params: {
                         subject_id: item.subject_id,
                         subject_title: item.subject_title,
-                        quizzes: quizzes ? JSON.stringify(item.quizzes) : [],
                       },
                     });
                   }}
@@ -87,7 +84,7 @@ export default function QuizScreen() {
       {/* Import Quizes */}
       <View style={{ flex: 1 }}>
         {/* Generate from Flashcard */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.button, themeSecondaryBackgroundStyle]}
         >
           <MaterialCommunityIcons
@@ -96,7 +93,7 @@ export default function QuizScreen() {
             color={Colors.light.primary}
           />
           <Text style={styles.buttonLabel}>Generate from Flashcard</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

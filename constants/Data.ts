@@ -309,6 +309,7 @@ export interface Flashcard {
 }
 export interface FlashcardItem {
   flashcard_id?: string;
+  flashcard_item_id: string;
   flashcard_front: string;
   flashcard_back: string;
   image?: any;
@@ -326,10 +327,8 @@ export const getLearnCards = [
     id: '1',
     question: 'Questions',
     image: null,
-    set: 'study'
-  }
-]
+    set: 'study',
+  },
+];
 
-export const imagesDataURL = [
-  'https://i.ibb.co/W29btXp/profile.jpg'
-]
+export const imagesDataURL = ['https://i.ibb.co/W29btXp/profile.jpg'];

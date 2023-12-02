@@ -47,7 +47,10 @@ export const createNotesBySubjectId = async (
     formData.append('subject_id', subject_id.toString());
     formData.append('pdfFile', file);
     const config = {
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
     };
     console.log('file in createNotesBySubjectId :', file);
     const result = await client.post('/api/notes', formData, config);

@@ -5,11 +5,14 @@ export const formatFrontBackFromOpenAI = async (text_chunk: []) => {
     const result = await client.post('/api/generateflashcard', {
       text_chunk,
     });
-
+    console.log('~~~~~~~~~~~[formatFrontBackFromOpenAI]~~~~~~~~~~');
+    console.log('result.data : ', result.data);
     if (result.status === 200) {
-      console.log('result.data : ', result.data.data);
+      console.log('result.data.data : ', result.data.data);
+      console.log('~~~~~~~~~~~[formatFrontBackFromOpenAI end]~~~~~~~~~~');
       return result.data.data;
     } else {
+      console.log('~~~~~~~~~~~[formatFrontBackFromOpenAI end]~~~~~~~~~~');
       return null;
     }
   } catch (error: any) {

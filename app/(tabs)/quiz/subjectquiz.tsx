@@ -26,6 +26,7 @@ export default function SubjectQuizScreen() {
   const isFocused = useIsFocused();
   useEffect(() => {
     (async () => {
+      console.log('subject_id in subjectquizscreen : ', subject_id);
       const quizzes = await getQuizzesBySubjectId(Number(subject_id));
       console.log('SubjectQuizScreen : quzizes : ', quizzes);
       setQuizSubjects(quizzes.quizzes);
@@ -45,12 +46,13 @@ export default function SubjectQuizScreen() {
                 <TouchableOpacity
                   key={quiz.quiz_id}
                   onPress={() => {
+                    console.log('on click : quiz :', quiz);
                     router.push({
                       pathname: '/(tabs)/quiz/question',
                       params: {
                         quiz_id: quiz.quiz_id ?? '',
                         quiz_title: subject_title,
-                        questions: JSON.stringify(quiz.questions),
+                        // questions: JSON.stringify(quiz.questions),
                         quiz_score: quiz.quiz_score,
                       },
                     });
@@ -62,8 +64,7 @@ export default function SubjectQuizScreen() {
             })}
         </ScrollView>
       </View>
-      <View style={styles.importQuizContainer}>
-        {/* Generate from Flashcard */}
+      {/* <View style={styles.importQuizContainer}>
         <TouchableOpacity
           style={[styles.button, themeSecondaryBackgroundStyle]}
         >
@@ -74,7 +75,7 @@ export default function SubjectQuizScreen() {
           />
           <Text style={styles.buttonLabel}>Generate from Flashcard</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
   );
 }

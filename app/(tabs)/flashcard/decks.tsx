@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text, View } from '../../../components/Themed';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, router } from 'expo-router';
 import { Flashcard, FlashcardItem, NoteType } from '../../../constants/Data';
 import { SIZES } from '../../../constants/Theme';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
@@ -12,23 +12,19 @@ import {
 } from 'react-native-gesture-handler';
 import Colors from '../../../constants/Colors';
 import { CardViewItem } from '../../../components/CardViewItem';
-import { router } from 'expo-router';
 import { FlashCardItem } from '../../../components/FlashCardItem';
+import { getFlashcardBySubjectId } from '../../../services/flashcards';
 
 export default function DecksScreen() {
-  const { subject_id, subject_category, subject_title, flashcards } =
-    useLocalSearchParams<{
-      subject_id: string;
-      subject_category: string;
-      subject_title: string;
-      flashcards: string;
-    }>();
-  const [flashcardItems, setFlashcardItems] = useState<Flashcard[]>(
-    JSON.parse(flashcards)
-  );
-  const [unfilteredFlashcardItems, setUnfilteredFlashcardItems] = useState<
-    Flashcard[]
-  >(JSON.parse(flashcards));
+  const { subject_id, subject_category, subject_title } = useLocalSearchParams<{
+    subject_id: string;
+    subject_category: string;
+    subject_title: string;
+  }>();
+  const params = useLocalSearchParams();
+  const [flashcardItems, setFlashcardItems] = useState<Flashcard[]>();
+  const [unfilteredFlashcardItems, setUnfilteredFlashcardItems] =
+    useState<Flashcard[]>();
   const {
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
@@ -37,9 +33,11 @@ export default function DecksScreen() {
   const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
-    (() => {
-      setFlashcardItems(JSON.parse(flashcards));
-      setUnfilteredFlashcardItems(JSON.parse(flashcards));
+    (async () => {
+      console.log('params in decksscreen : ', params);
+      const result = await getFlashcardBySubjectId(Number(subject_id));
+      setFlashcardItems(result.flashcards);
+      setUnfilteredFlashcardItems(result.flashcards);
     })();
   }, []);
 
@@ -48,7 +46,7 @@ export default function DecksScreen() {
     // Show list view on text
 
     if (text) {
-      const filteredList = unfilteredFlashcardItems.filter(
+      const filteredList = unfilteredFlashcardItems?.filter(
         (flashcard: Flashcard) =>
           flashcard.flashcard_title.toLowerCase().includes(text.toLowerCase())
       );
@@ -88,9 +86,7 @@ export default function DecksScreen() {
                     subject_category: subject_category,
                     subject_title: subject_title,
                     flashcard_title: item.flashcard_title,
-                    flashcard_item: item.flashcard_item
-                      ? JSON.stringify(item.flashcard_item)
-                      : '',
+                    flashcard_id: item.flashcard_id?.toString() ?? '',
                   },
                 });
               }}

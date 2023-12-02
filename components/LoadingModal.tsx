@@ -52,7 +52,7 @@ export function LoadingModal({
         >
           <View style={styles.modalTopContainer}>
             <View style={{ alignItems: 'center' }}></View>
-            <View style={{ alignItems: 'center' }}></View>
+            <View style={{ alignItems: 'center' }}>{children}</View>
             <Text style={[styles.modalSubtitle, themeTextStyle]}>
               {displayText}
             </Text>

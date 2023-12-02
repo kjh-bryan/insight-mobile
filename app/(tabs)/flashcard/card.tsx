@@ -14,6 +14,7 @@ import * as Progress from 'react-native-progress';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
 import Colors from '../../../constants/Colors';
 import { SIZES } from '../../../constants/Theme';
+import { getFlashcardItemByFlashcardId } from '../../../services/flashcards';
 
 const Page = () => {
   const {
@@ -26,21 +27,26 @@ const Page = () => {
     subject_category,
     subject_title,
     flashcard_title,
-    flashcard_item,
+    flashcard_id,
   } = useLocalSearchParams<{
     subject_id: string;
     subject_category: string;
     subject_title: string;
     flashcard_title: string;
-    flashcard_item: string;
+    flashcard_id: string;
   }>();
-  const [cards, setCards] = useState<FlashcardItem[]>(
-    JSON.parse(flashcard_item)
-  );
+  const [cards, setCards] = useState<FlashcardItem[]>();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFront, setShowFront] = useState(true);
   const [textHidden, setTextHidden] = useState(false);
   const [endSession, setEndSession] = useState(false);
+  useEffect(() => {
+    (async () => {
+      const result = await getFlashcardItemByFlashcardId(Number(flashcard_id));
+      console.log('asdsads : ', result);
+      setCards(result.result);
+    })();
+  }, []);
   const rotate = useSharedValue(0);
   const frontAnimatedStyles = useAnimatedStyle(() => {
     const rotateValue = interpolate(rotate.value, [0, 1], [0, 180]);
@@ -67,7 +73,7 @@ const Page = () => {
   // Rotate the card
   const onShowAnswer = () => {
     rotate.value = 1;
-    if (currentIndex >= cards.length - 1) {
+    if (cards && currentIndex >= cards.length - 1) {
       setEndSession(true);
     }
     setShowFront(false);
@@ -75,7 +81,7 @@ const Page = () => {
 
   // Show next card
   const onNextCard = async () => {
-    if (currentIndex < cards.length - 1) {
+    if (cards && currentIndex < cards.length - 1) {
       rotate.value = 0;
       setTextHidden(true);
       setTimeout(() => {
@@ -90,7 +96,7 @@ const Page = () => {
 
   return (
     <View style={[defaultStyleSheet.container, themeBackgroundStyle]}>
-      {cards.length > 0 && (
+      {cards && cards.length > 0 && (
         <>
           <View style={styles.container}>
             <View style={styles.questionHeaderTitle}>

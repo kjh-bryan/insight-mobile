@@ -35,6 +35,8 @@ export default function FlashcardScreen() {
     (async () => {
       const result = await getFlashcardsByUserId(1);
       console.log('Flashcard Screen result :', result);
+      // console.log('result.subjects : ', result.subjects);
+      console.log('result.subjects : ', result.subjects[0].flashcards);
       setSubjects(result.subjects);
       setUnfilteredSubjects(result.subjects);
     })();
@@ -81,18 +83,21 @@ export default function FlashcardScreen() {
         <FlatList
           keyExtractor={(item) => item.subject_id}
           data={subjects}
-          renderItem={({ item }: { item: SubjectFlashcardType }) => (
+          renderItem={({ item }) => (
             <TouchableWithoutFeedback
               onPress={() => {
+                console.log('tocuhanle print item :', item);
+                console.log('tocuhanle print flashcards :', item.flashcards);
+                console.log(
+                  'tocuhanle print json flashcards :',
+                  JSON.stringify(item.flashcards)
+                );
                 router.push({
                   pathname: '/(tabs)/flashcard/decks',
                   params: {
                     subject_id: item.subject_id,
                     subject_category: item.subject_category,
                     subject_title: item.subject_title,
-                    flashcards: item.flashcards
-                      ? JSON.stringify(item.flashcards)
-                      : '',
                   },
                 });
               }}
