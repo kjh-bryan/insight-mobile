@@ -6,20 +6,33 @@ import Colors from '../../../constants/Colors';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { quiz3Data, quizSubjectsData } from '../../../constants/Data';
 import { QuizViewItem } from '../../../components/QuizViewItem';
 import { QuizSubjectViewItem } from '../../../components/QuizSubjectViewItem';
 import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { getQuizzesByUserId } from '../../../services/quiz';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function QuizScreen() {
+  const [quizzes, setQuizzes] = useState([]);
+
   const {
     themeTextStyle,
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
   } = ThemeUtils();
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    (async () => {
+      const quizzes = await getQuizzesByUserId(1);
+      setQuizzes(quizzes.subjects);
+      console.log(quizzes.subjects);
+      console.log('QuizScreen - isFocused :', isFocused);
+    })();
+  }, [isFocused]);
+  const recentQuiz = [] as any;
 
-  const recentQuiz = quiz3Data[0];
-  const quizzes = quizSubjectsData;
+  const quizze = [] as any;
   return (
     <View style={styles.container}>
       <View style={[styles.titleHeader, themeBackgroundStyle]}>
@@ -28,8 +41,7 @@ export default function QuizScreen() {
           <Text style={styles.titleColor}>knowledge</Text>
         </Text>
       </View>
-      <View style={styles.recentQuizContainer}>
-        {/* Recent quiz */}
+      {/* <View style={styles.recentQuizContainer}>
         <Text style={styles.subtitle}>Recent Quiz</Text>
         <TouchableOpacity
           onPress={() => {
@@ -45,22 +57,23 @@ export default function QuizScreen() {
         >
           <QuizViewItem item={recentQuiz} />
         </TouchableOpacity>
-      </View>
+      </View> */}
       <View style={{ flex: 2.3 }}>
         <Text style={{ marginVertical: 10 }}>Continue Studying</Text>
         {/* Quizes */}
         <ScrollView style={{ flex: 1 }}>
           {quizzes &&
-            quizzes.map((item) => {
+            quizzes.map((item: any) => {
               return (
                 <TouchableOpacity
-                  key={item.quizSubjectTitle}
+                  key={item.subject_id}
                   onPress={() => {
                     router.push({
                       pathname: '/(tabs)/quiz/subjectquiz',
                       params: {
-                        quizSubjectTitle: item.quizSubjectTitle,
-                        quizSubjects: JSON.stringify(item.quizSubjects),
+                        subject_id: item.subject_id,
+                        subject_title: item.subject_title,
+                        quizzes: quizzes ? JSON.stringify(item.quizzes) : [],
                       },
                     });
                   }}

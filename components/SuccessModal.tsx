@@ -1,4 +1,4 @@
-import React, { Ref } from 'react';
+import React, { Ref, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -10,27 +10,32 @@ import Colors from '../constants/Colors';
 import { SIZES } from '../constants/Theme';
 import { Text } from './Themed';
 import { ThemeUtils } from '../utils/ThemeUtils';
+import { AntDesign } from '@expo/vector-icons';
 
-type CustomModalProps = {
+type SuccessModalProps = {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  displayText: string;
   children?: React.ReactElement;
   scaleValue?: any;
   stopFunction?: (status: boolean) => Promise<void>;
+  animationRef: any;
 };
 
-export function CustomModal({
+export function SuccessModal({
   scaleValue,
   showModal,
   setShowModal,
+  displayText,
   children,
-  stopFunction,
-}: CustomModalProps) {
+  animationRef,
+}: SuccessModalProps) {
   const {
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
     themeTextStyle,
   } = ThemeUtils();
+
   return (
     <Modal transparent visible={showModal}>
       <View style={styles.modalBackground}>
@@ -43,54 +48,49 @@ export function CustomModal({
         >
           <View style={styles.modalTopContainer}>
             <View style={{ alignItems: 'center' }}></View>
-            <View style={{ alignItems: 'center' }}>{children}</View>
+            <View style={{ alignItems: 'center' }}>
+              <AntDesign
+                name="checkcircleo"
+                size={40}
+                color={Colors.default.primary}
+              />
+            </View>
             <Text style={[styles.modalSubtitle, themeTextStyle]}>
-              Listening..
+              {displayText}
             </Text>
           </View>
           <View style={styles.modalBottomContainer}>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.modalButtonRightSeparator]}
-              onPress={() => {
-                setTimeout(() => setShowModal(false), 200);
-                Animated.timing(scaleValue, {
-                  toValue: 0,
-                  duration: 200,
-                  useNativeDriver: true,
-                }).start();
-                if (stopFunction) {
-                  stopFunction(false);
-                }
-              }}
-            >
-              <Text
-                style={[
-                  styles.buttonLabelLeftColor,
-                  styles.buttonLabel,
-                  themeTextStyle,
-                ]}
+            <View style={{ alignItems: 'center' }}>
+              <TouchableOpacity
+                style={{
+                  marginTop: 10,
+                  paddingVertical: SIZES.base,
+                  paddingHorizontal: SIZES.base,
+                  backgroundColor: Colors.default.primary,
+                  borderRadius: SIZES.base,
+                  width: '80%',
+                  alignItems: 'center',
+                }}
+                onPress={() => {
+                  // handleCreateSubject();
+                  setTimeout(() => {
+                    Animated.timing(scaleValue, {
+                      toValue: 0,
+                      duration: 300,
+                      useNativeDriver: true,
+                    }).start(() => {
+                      setShowModal(false);
+                    });
+                  }, 2000);
+                }}
               >
-                Cancel
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setTimeout(() => setShowModal(false), 200);
-                Animated.timing(scaleValue, {
-                  toValue: 0,
-                  duration: 200,
-                  useNativeDriver: true,
-                }).start();
-                if (stopFunction) {
-                  stopFunction(true);
-                }
-              }}
-              style={[styles.modalButton, styles.modalButtonLeftSeparator]}
-            >
-              <Text style={[styles.buttonLabelRightColor, styles.buttonLabel]}>
-                Complete
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{ fontSize: SIZES.h3, color: Colors.default.white }}
+                >
+                  Confirm
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </Animated.View>
       </View>
@@ -121,13 +121,11 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   modalBottomContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
     borderTopColor: Colors.light.slate500,
-    borderTopWidth: 0.5,
+    paddingHorizontal: SIZES.base,
+    paddingBottom: SIZES.padding - 4,
   },
   closeModal: {
     fontSize: 20,
@@ -140,8 +138,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   modalSubtitle: {
-    fontSize: SIZES.h2,
-    marginVertical: 30,
+    fontSize: SIZES.h2 - 4,
+    marginVertical: 20,
     textAlign: 'center',
     color: Colors.light.slate600,
   },
@@ -166,5 +164,13 @@ const styles = StyleSheet.create({
   },
   buttonLabelRightColor: {
     color: Colors.light.primary,
+  },
+  progressBar: {
+    marginVertical: 4,
+  },
+  progressDesc: {
+    textAlign: 'center',
+    marginTop: 4,
+    fontSize: SIZES.h3 + 2,
   },
 });

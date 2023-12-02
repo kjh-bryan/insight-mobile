@@ -3,20 +3,20 @@ import Colors from '../constants/Colors';
 import { SIZES } from '../constants/Theme';
 import { Text, View } from './Themed';
 import { StyleSheet, Dimensions } from 'react-native';
-import { NoteType } from '../constants/Data';
+import { Flashcard, FlashcardItem, NoteType } from '../constants/Data';
 
-type CardViewItemProp = {
-  item: NoteType;
+type FlashCardItemProp = {
+  item: Flashcard;
 };
 
-export function CardViewItem({ item }: CardViewItemProp) {
+export function FlashCardItem({ item }: FlashCardItemProp) {
   return (
     <View style={styles.container}>
       <Text style={styles.itemId} weight="semibold">
         {/* {item.note_id} */}
       </Text>
       <Text style={styles.itemTitle} weight="medium">
-        {item.note_title}
+        {item.flashcard_title}
       </Text>
     </View>
   );

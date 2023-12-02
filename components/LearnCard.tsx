@@ -1,17 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Card } from '../constants/Data';
+import { FlashcardItem } from '../constants/Data';
 
 interface Props {
-  card: Card;
+  card: FlashcardItem;
   isFront: boolean;
   textHidden?: boolean;
 }
 const LearnCard = ({ card, isFront, textHidden }: Props) => {
   return (
     <View style={styles.container}>
-      {isFront && !textHidden && <Text style={styles.cardNumber}>{card.question}</Text>}
-      {!isFront && <Text style={styles.cardNumber}>{card.answer}</Text>}
+      {isFront && !textHidden && (
+        <Text style={styles.cardNumber}>{card.flashcard_front}</Text>
+      )}
+      {!isFront && <Text style={styles.cardNumber}>{card.flashcard_back}</Text>}
     </View>
   );
 };

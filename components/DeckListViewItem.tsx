@@ -3,11 +3,11 @@ import Colors from '../constants/Colors';
 import { SIZES } from '../constants/Theme';
 import { Text, View } from './Themed';
 import { StyleSheet } from 'react-native';
-type ListViewItemProp = {
+type DeckListViewItemProp = {
   item: any;
 };
 
-export function ListViewItem({ item }: ListViewItemProp) {
+export function DeckListViewItem({ item }: DeckListViewItemProp) {
   return (
     <View style={styles.container}>
       <Text style={styles.itemCategory} weight="semibold">
@@ -17,9 +17,9 @@ export function ListViewItem({ item }: ListViewItemProp) {
         {item.subject_title}
       </Text>
       <Text style={styles.itemSubtitle} weight="semibold">
-        {item.notes?.length === 0
-          ? `${item.notes?.length} note`
-          : `${item.notes?.length} notes`}
+        {item.flashcard?.length === 0
+          ? `${item.flashcard?.length} flashcard`
+          : `${item.flashcard?.length} flashcards`}
       </Text>
     </View>
   );

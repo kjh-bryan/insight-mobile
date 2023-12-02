@@ -1,4 +1,4 @@
-import React, { Ref } from 'react';
+import React, { Ref, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -10,27 +10,36 @@ import Colors from '../constants/Colors';
 import { SIZES } from '../constants/Theme';
 import { Text } from './Themed';
 import { ThemeUtils } from '../utils/ThemeUtils';
+import * as Progress from 'react-native-progress';
+import Lottie from 'lottie-react-native';
+import { Easing } from 'react-native-reanimated';
 
-type CustomModalProps = {
+type LoadingModalProps = {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  displayText: string;
+  progress: number;
   children?: React.ReactElement;
   scaleValue?: any;
   stopFunction?: (status: boolean) => Promise<void>;
+  animationRef: any;
 };
 
-export function CustomModal({
+export function LoadingModal({
   scaleValue,
   showModal,
-  setShowModal,
+  displayText,
+  progress,
   children,
-  stopFunction,
-}: CustomModalProps) {
+  animationRef,
+}: LoadingModalProps) {
   const {
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
     themeTextStyle,
   } = ThemeUtils();
+
+  console.log('progress :', progress);
   return (
     <Modal transparent visible={showModal}>
       <View style={styles.modalBackground}>
@@ -43,54 +52,21 @@ export function CustomModal({
         >
           <View style={styles.modalTopContainer}>
             <View style={{ alignItems: 'center' }}></View>
-            <View style={{ alignItems: 'center' }}>{children}</View>
+            <View style={{ alignItems: 'center' }}></View>
             <Text style={[styles.modalSubtitle, themeTextStyle]}>
-              Listening..
+              {displayText}
             </Text>
           </View>
           <View style={styles.modalBottomContainer}>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.modalButtonRightSeparator]}
-              onPress={() => {
-                setTimeout(() => setShowModal(false), 200);
-                Animated.timing(scaleValue, {
-                  toValue: 0,
-                  duration: 200,
-                  useNativeDriver: true,
-                }).start();
-                if (stopFunction) {
-                  stopFunction(false);
-                }
-              }}
-            >
-              <Text
-                style={[
-                  styles.buttonLabelLeftColor,
-                  styles.buttonLabel,
-                  themeTextStyle,
-                ]}
-              >
-                Cancel
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setTimeout(() => setShowModal(false), 200);
-                Animated.timing(scaleValue, {
-                  toValue: 0,
-                  duration: 200,
-                  useNativeDriver: true,
-                }).start();
-                if (stopFunction) {
-                  stopFunction(true);
-                }
-              }}
-              style={[styles.modalButton, styles.modalButtonLeftSeparator]}
-            >
-              <Text style={[styles.buttonLabelRightColor, styles.buttonLabel]}>
-                Complete
-              </Text>
-            </TouchableOpacity>
+            <Progress.Bar
+              progress={progress}
+              color={Colors.default.primary}
+              width={null}
+              style={styles.progressBar}
+            />
+            <Text style={styles.progressDesc}>{`${Math.floor(
+              progress * 100
+            )}% / 100%`}</Text>
           </View>
         </Animated.View>
       </View>
@@ -121,13 +97,11 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   modalBottomContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
     borderTopColor: Colors.light.slate500,
-    borderTopWidth: 0.5,
+    paddingHorizontal: SIZES.base,
+    paddingBottom: SIZES.padding - 4,
   },
   closeModal: {
     fontSize: 20,
@@ -140,8 +114,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   modalSubtitle: {
-    fontSize: SIZES.h2,
-    marginVertical: 30,
+    fontSize: SIZES.h2 - 4,
+    marginVertical: 20,
     textAlign: 'center',
     color: Colors.light.slate600,
   },
@@ -166,5 +140,13 @@ const styles = StyleSheet.create({
   },
   buttonLabelRightColor: {
     color: Colors.light.primary,
+  },
+  progressBar: {
+    marginVertical: 4,
+  },
+  progressDesc: {
+    textAlign: 'center',
+    marginTop: 4,
+    fontSize: SIZES.h3 + 2,
   },
 });

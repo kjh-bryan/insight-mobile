@@ -78,7 +78,9 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'light' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider
+      value={colorScheme === 'light' ? DefaultTheme : DefaultTheme}
+    >
       <SafeAreaView style={{ flex: 1 }}>
         <Stack initialRouteName='index'>
           <Stack.Screen name="index" options={{ headerShown: false }} />

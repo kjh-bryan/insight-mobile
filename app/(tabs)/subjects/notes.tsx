@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text, View } from '../../../components/Themed';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { NoteType } from '../../../constants/Data';
 import { SIZES } from '../../../constants/Theme';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
@@ -31,6 +31,7 @@ export default function NotesScreen() {
   useEffect(() => {
     (() => {
       setNoteItem(JSON.parse(notes));
+      console.log('n : ', noteItems);
     })();
   }, []);
 
@@ -40,7 +41,7 @@ export default function NotesScreen() {
 
     if (text) {
       const filteredList = JSON.parse(notes).filter((note: NoteType) =>
-        note.noteTitle.toLowerCase().includes(text.toLowerCase())
+        note.note_title.toLowerCase().includes(text.toLowerCase())
       );
       setNoteItem(filteredList);
     } else {
@@ -72,7 +73,14 @@ export default function NotesScreen() {
             <TouchableOpacity
               onPress={() => {
                 // open pdf
-                console.log('Print pdf url : ', item.pdfUrl);
+                console.log('Print pdf url : ', item.note_url);
+                router.push({
+                  pathname: '/(tabs)/subjects/pdf',
+                  params: {
+                    src: item.note_url ?? '',
+                    title: item.note_title,
+                  },
+                });
               }}
             >
               <CardViewItem item={item} />

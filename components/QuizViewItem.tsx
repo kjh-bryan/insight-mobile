@@ -16,12 +16,12 @@ export function QuizViewItem({ item }: QuestionViewItemProp) {
       <View style={styles.container}>
         <View style={styles.itemContainer}>
           <Text style={styles.itemTitle} weight="semibold">
-            {item.quizTitle}
+            {item.quiz_title}
           </Text>
           <Text style={styles.itemScore} weight="medium">
-            {item.recentScore == -1
+            {item.quiz_score == -1 || item.questions === undefined
               ? 'Unattempted'
-              : 'Score : ' + item.recentScore + '/' + item.questions.length}
+              : 'Score : ' + item.quiz_score + '/' + item.questions.length}
           </Text>
         </View>
       </View>

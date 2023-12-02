@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from '../../../components/Themed';
 import { StyleSheet } from 'react-native';
 import { SIZES } from '../../../constants/Theme';
@@ -6,14 +6,26 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import Colors from '../../../constants/Colors';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { updateQuizScoreByQuizId } from '../../../services/quiz';
 
 export default function ResultScreen() {
-  const { quizTitle, score, totalQuestion } = useLocalSearchParams<{
-    quizTitle: string;
+  const { quiz_id, quiz_title, score, totalQuestion } = useLocalSearchParams<{
+    quiz_id: string;
+    quiz_title: string;
     score: string;
     totalQuestion: string;
   }>();
   const image = require('../../../assets/images/trophy.png');
+
+  useEffect(() => {
+    (async () => {
+      const result = await updateQuizScoreByQuizId(
+        Number(quiz_id),
+        Number(score)
+      );
+      console.log('[ResultScreen] useEffect : result : ', result);
+    })();
+  }, []);
   return (
     <View style={styles.container}>
       <View style={styles.quizHeaderContainer}>
@@ -34,7 +46,7 @@ export default function ResultScreen() {
       </View>
       <View style={styles.quizDetailContainer}>
         <Text style={styles.quizDetailTitle} weight="semibold">
-          {quizTitle}
+          {quiz_title}
         </Text>
       </View>
       <View style={styles.quizScoreContainer}>
