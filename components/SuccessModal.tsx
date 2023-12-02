@@ -10,36 +10,32 @@ import Colors from '../constants/Colors';
 import { SIZES } from '../constants/Theme';
 import { Text } from './Themed';
 import { ThemeUtils } from '../utils/ThemeUtils';
-import * as Progress from 'react-native-progress';
-import Lottie from 'lottie-react-native';
-import { Easing } from 'react-native-reanimated';
+import { AntDesign } from '@expo/vector-icons';
 
-type LoadingModalProps = {
+type SuccessModalProps = {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   displayText: string;
-  progress: number;
   children?: React.ReactElement;
   scaleValue?: any;
   stopFunction?: (status: boolean) => Promise<void>;
   animationRef: any;
 };
 
-export function LoadingModal({
+export function SuccessModal({
   scaleValue,
   showModal,
+  setShowModal,
   displayText,
-  progress,
   children,
   animationRef,
-}: LoadingModalProps) {
+}: SuccessModalProps) {
   const {
     themeBackgroundStyle,
     themeSecondaryBackgroundStyle,
     themeTextStyle,
   } = ThemeUtils();
 
-  console.log('progress :', progress);
   return (
     <Modal transparent visible={showModal}>
       <View style={styles.modalBackground}>
@@ -52,21 +48,49 @@ export function LoadingModal({
         >
           <View style={styles.modalTopContainer}>
             <View style={{ alignItems: 'center' }}></View>
-            <View style={{ alignItems: 'center' }}></View>
+            <View style={{ alignItems: 'center' }}>
+              <AntDesign
+                name="checkcircleo"
+                size={40}
+                color={Colors.default.primary}
+              />
+            </View>
             <Text style={[styles.modalSubtitle, themeTextStyle]}>
               {displayText}
             </Text>
           </View>
           <View style={styles.modalBottomContainer}>
-            <Progress.Bar
-              progress={progress}
-              color={Colors.default.primary}
-              width={null}
-              style={styles.progressBar}
-            />
-            <Text style={styles.progressDesc}>{`${Math.floor(
-              progress * 100
-            )}% / 100%`}</Text>
+            <View style={{ alignItems: 'center' }}>
+              <TouchableOpacity
+                style={{
+                  marginTop: 10,
+                  paddingVertical: SIZES.base,
+                  paddingHorizontal: SIZES.base,
+                  backgroundColor: Colors.default.primary,
+                  borderRadius: SIZES.base,
+                  width: '80%',
+                  alignItems: 'center',
+                }}
+                onPress={() => {
+                  // handleCreateSubject();
+                  setTimeout(() => {
+                    Animated.timing(scaleValue, {
+                      toValue: 0,
+                      duration: 300,
+                      useNativeDriver: true,
+                    }).start(() => {
+                      setShowModal(false);
+                    });
+                  }, 2000);
+                }}
+              >
+                <Text
+                  style={{ fontSize: SIZES.h3, color: Colors.default.white }}
+                >
+                  Confirm
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </Animated.View>
       </View>

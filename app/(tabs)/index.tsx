@@ -45,6 +45,7 @@ import {
   formatQuestionAnswerFromOpenAI,
 } from '../../services/openai';
 import { createQuizBySubjectId } from '../../services/quiz';
+import { SuccessModal } from '../../components/SuccessModal';
 
 export default function HomeScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -52,7 +53,8 @@ export default function HomeScreen() {
   const scaleValue = React.useRef(new Animated.Value(0)).current;
   const [document, setDocument] =
     useState<DocumentPicker.DocumentPickerAsset | null>(null);
-  const [showLoadingModal, setLoadingModal] = useState(true);
+  const [showLoadingModal, setLoadingModal] = useState(false);
+  const [showSuccessModal, setSuccessModal] = useState(false);
   const [loadingModalTitle, setLoadingModalTitle] = useState('');
   const [loadingModalProgress, setLoadingModalProgress] = useState(0);
   const [showSelectionModal, setSelectionModal] = useState(false);
@@ -63,13 +65,6 @@ export default function HomeScreen() {
   const [pdfText, setPdfText] = useState([]);
   const animationRef = useRef<LottieView>(null);
 
-  useEffect(() => {
-    Animated.timing(scaleValue, {
-      toValue: 1,
-      useNativeDriver: true,
-      duration: 300,
-    }).start();
-  }, []);
   const pickDocument = async () => {
     try {
       const docRes = await DocumentPicker.getDocumentAsync({
@@ -153,7 +148,7 @@ export default function HomeScreen() {
       setLoadingModalProgress(modalProgress);
       setLoadingModalTitle(steps[newProgress]);
       console.log('result text : ', result.text);
-      handleSendTextWithPromptGPT(newProgress, result.text);
+      // handleSendTextWithPromptGPT(newProgress, result.text);
     }
   };
 
@@ -253,8 +248,6 @@ export default function HomeScreen() {
     setProgressStep(newProgress);
     setLoadingModalTitle(steps[progress + 1]);
     setLoadingModalProgress(modalProgress);
-    animationRef.current?.reset();
-    animationRef.current?.play();
     setTimeout(() => {
       Animated.timing(scaleValue, {
         toValue: 0,
@@ -262,6 +255,14 @@ export default function HomeScreen() {
         useNativeDriver: true,
       }).start(() => {
         setLoadingModal(false);
+        setProgressStep(0);
+        setLoadingModalProgress(0);
+        setSuccessModal(true);
+        Animated.timing(scaleValue, {
+          toValue: 1,
+          useNativeDriver: true,
+          duration: 300,
+        }).start(() => {});
       });
     }, 2000);
   };
@@ -488,6 +489,14 @@ export default function HomeScreen() {
         displayText={loadingModalTitle}
         animationRef={animationRef}
         progress={loadingModalProgress}
+      />
+      <SuccessModal
+        showModal={showSuccessModal}
+        setShowModal={setSuccessModal}
+        scaleValue={scaleValue}
+        stopFunction={stopRecording}
+        displayText={'Success!'}
+        animationRef={animationRef}
       />
       {/* <ActivityIndicator
           animating={true}
