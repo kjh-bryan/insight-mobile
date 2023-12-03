@@ -24,7 +24,7 @@ export function QuizSubjectViewItem({ item }: QuizSubjectViewItemProp) {
           </Text>
         </View>
         <View style={styles.itemIconContainer}>
-          <AntDesign name="right" size={24} color="black" />
+          <AntDesign name="right" size={24} color={Colors.default.slate100} />
         </View>
       </View>
     </View>
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   itemTitle: {
-    color: Colors.default.slate500,
+    color: Colors.default.slate200,
   },
   itemLectures: {
     color: Colors.default.white,

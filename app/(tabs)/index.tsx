@@ -478,7 +478,7 @@ export default function HomeScreen() {
     <View style={[styles.container, themeBackgroundStyle]}>
       <View style={[styles.titleHeader, themeBackgroundStyle]}>
         <Text style={[styles.title, themeTextStyle]}>
-          Select an <Text style={styles.titleColor}>Option</Text>
+          To Get <Text style={styles.titleColor}>Started</Text>
         </Text>
       </View>
       <CustomModal

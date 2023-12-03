@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import { Text, View } from '../../../components/Themed';
 import { useLocalSearchParams, router } from 'expo-router';
-import { Flashcard, FlashcardItem, NoteType } from '../../../constants/Data';
+import { Flashcard } from '../../../constants/Data';
 import { SIZES } from '../../../constants/Theme';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
 import {
@@ -11,10 +11,11 @@ import {
   TouchableOpacity,
 } from 'react-native-gesture-handler';
 import Colors from '../../../constants/Colors';
-import { CardViewItem } from '../../../components/CardViewItem';
 import { FlashCardItem } from '../../../components/FlashCardItem';
 import { getFlashcardBySubjectId } from '../../../services/flashcards';
+import { NoteLoader } from '../../../components/NoteLoader';
 
+const width = Dimensions.get('window').width - SIZES.padding * 2;
 export default function DecksScreen() {
   const { subject_id, subject_category, subject_title } = useLocalSearchParams<{
     subject_id: string;
@@ -25,11 +26,8 @@ export default function DecksScreen() {
   const [flashcardItems, setFlashcardItems] = useState<Flashcard[]>();
   const [unfilteredFlashcardItems, setUnfilteredFlashcardItems] =
     useState<Flashcard[]>();
-  const {
-    themeBackgroundStyle,
-    themeSecondaryBackgroundStyle,
-    themeTextStyle,
-  } = ThemeUtils();
+  const [loading, setLoading] = useState(true);
+  const { themeTextStyle } = ThemeUtils();
   const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
@@ -38,6 +36,7 @@ export default function DecksScreen() {
       const result = await getFlashcardBySubjectId(Number(subject_id));
       setFlashcardItems(result.flashcards);
       setUnfilteredFlashcardItems(result.flashcards);
+      setTimeout(() => setLoading(false), 1000);
     })();
   }, []);
 
@@ -69,32 +68,36 @@ export default function DecksScreen() {
         onChangeText={(text) => handleSearchInput(text)}
       />
       <View style={styles.cardViewContainer}>
-        <FlatList
-          numColumns={2}
-          columnWrapperStyle={{
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-          }}
-          data={flashcardItems}
-          renderItem={({ item }: { item: Flashcard }) => (
-            <TouchableOpacity
-              onPress={() => {
-                router.push({
-                  pathname: '/(tabs)/flashcard/card',
-                  params: {
-                    subject_id: subject_id,
-                    subject_category: subject_category,
-                    subject_title: subject_title,
-                    flashcard_title: item.flashcard_title,
-                    flashcard_id: item.flashcard_id?.toString() ?? '',
-                  },
-                });
-              }}
-            >
-              <FlashCardItem item={item} />
-            </TouchableOpacity>
-          )}
-        />
+        {loading ? (
+          <NoteLoader width={width} />
+        ) : (
+          <FlatList
+            numColumns={2}
+            columnWrapperStyle={{
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+            }}
+            data={flashcardItems}
+            renderItem={({ item }: { item: Flashcard }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  router.push({
+                    pathname: '/(tabs)/flashcard/card',
+                    params: {
+                      subject_id: subject_id,
+                      subject_category: subject_category,
+                      subject_title: subject_title,
+                      flashcard_title: item.flashcard_title,
+                      flashcard_id: item.flashcard_id?.toString() ?? '',
+                    },
+                  });
+                }}
+              >
+                <FlashCardItem item={item} />
+              </TouchableOpacity>
+            )}
+          />
+        )}
       </View>
     </View>
   );

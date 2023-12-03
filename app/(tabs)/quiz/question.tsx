@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Touchable, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, View } from '../../../components/Themed';
 import { SIZES } from '../../../constants/Theme';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ThemeUtils } from '../../../utils/ThemeUtils';
-import { ChoiceType, QuestionType } from '../../../constants/Data';
+import { QuestionType } from '../../../constants/Data';
 import { ScrollView } from 'react-native-gesture-handler';
 import * as Progress from 'react-native-progress';
 import Colors from '../../../constants/Colors';
-import { ToggleButton, RadioButton } from 'react-native-paper';
+import { RadioButton } from 'react-native-paper';
 import { getQuestionByQuizId } from '../../../services/quiz';
+import { QuestionLoader } from '../../../components/QuestionLoader';
 
 export default function QuestionScreen() {
   const { quiz_id, quiz_title, quiz_score } = useLocalSearchParams<{
@@ -17,11 +17,7 @@ export default function QuestionScreen() {
     quiz_title: string;
     quiz_score: string;
   }>();
-  const {
-    themeTextStyle,
-    themeBackgroundStyle,
-    themeSecondaryBackgroundStyle,
-  } = ThemeUtils();
+  const [loading, setLoading] = useState(true);
   const [quizQuestion, setQuizQuestions] = useState<QuestionType[]>();
   const [answer, setAnswer] = useState('');
   const [score, setScore] = useState(0);
@@ -39,6 +35,7 @@ export default function QuestionScreen() {
       console.log(result);
       setQuizQuestions(result.questions);
       setTotalQuestion(result.questions.length);
+      setTimeout(() => setLoading(false), 1000);
     })();
   }, []);
 
@@ -60,110 +57,116 @@ export default function QuestionScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.questionHeaderContainer}>
-        {/* Question Title Header */}
-        <Text style={styles.questionHeaderTitle} weight="medium">
-          {quiz_title}
-        </Text>
-        <Progress.Bar
-          // prettier-ignore
-          progress={((100 / totalQuestion) / 100) * (currentQuestionIndex + 1)}
-          width={null}
-          color={Colors.default.primary}
-          style={styles.questionProgressBar}
-        />
-        <Text style={styles.questionProgress} weight="medium">
-          {currentQuestionIndex + 1} {'/'} {totalQuestion}
-        </Text>
-      </View>
-      <View style={styles.questionContainer}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <View style={styles.questionsContainer}>
-            {/* Question */}
-            <Text style={styles.questionTitle}>
-              {currentQuestion?.question}
+      {loading ? (
+        <QuestionLoader />
+      ) : (
+        <>
+          <View style={styles.questionHeaderContainer}>
+            {/* Question Title Header */}
+            <Text style={styles.questionHeaderTitle} weight="medium">
+              {quiz_title}
+            </Text>
+            <Progress.Bar
+              // prettier-ignore
+              progress={((100 / totalQuestion) / 100) * (currentQuestionIndex + 1)}
+              width={null}
+              color={Colors.default.primary}
+              style={styles.questionProgressBar}
+            />
+            <Text style={styles.questionProgress} weight="medium">
+              {currentQuestionIndex + 1} {'/'} {totalQuestion}
             </Text>
           </View>
-          <View style={styles.questionChoicesContainer}>
-            <RadioButton.Group
-              value={answer}
-              onValueChange={(answer) => setAnswer(answer)}
-            >
-              {currentQuestion &&
-                currentQuestion.choice &&
-                currentQuestion.choice.map((choice) => {
-                  return (
-                    <RadioButton.Item
-                      color={Colors.default.primary}
-                      uncheckedColor={Colors.default.slate500}
-                      label={choice.choice}
-                      style={styles.choiceContainer}
-                      value={choice.choice_id.toString()}
-                      key={choice.choice_id}
-                    />
-                  );
-                })}
-            </RadioButton.Group>
+          <View style={styles.questionContainer}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+              <View style={styles.questionsContainer}>
+                {/* Question */}
+                <Text style={styles.questionTitle}>
+                  {currentQuestion?.question}
+                </Text>
+              </View>
+              <View style={styles.questionChoicesContainer}>
+                <RadioButton.Group
+                  value={answer}
+                  onValueChange={(answer) => setAnswer(answer)}
+                >
+                  {currentQuestion &&
+                    currentQuestion.choice &&
+                    currentQuestion.choice.map((choice) => {
+                      return (
+                        <RadioButton.Item
+                          color={Colors.default.primary}
+                          uncheckedColor={Colors.default.slate500}
+                          label={choice.choice}
+                          style={styles.choiceContainer}
+                          value={choice.choice_id.toString()}
+                          key={choice.choice_id}
+                        />
+                      );
+                    })}
+                </RadioButton.Group>
+              </View>
+            </ScrollView>
           </View>
-        </ScrollView>
-      </View>
-      <View style={styles.nextQuestionContainer}>
-        {/* Next Question Button */}
-        <TouchableOpacity
-          disabled={answer === '' ? true : false}
-          style={
-            answer === ''
-              ? styles.nextQuestionDisabledButton
-              : styles.nextQuestionButton
-          }
-          onPress={() => {
-            if (currentQuestionIndex + 1 != totalQuestion) {
-              if (currentQuestionAnswer.match(answer)) {
-                setScore(score + 1);
+          <View style={styles.nextQuestionContainer}>
+            {/* Next Question Button */}
+            <TouchableOpacity
+              disabled={answer === '' ? true : false}
+              style={
+                answer === ''
+                  ? styles.nextQuestionDisabledButton
+                  : styles.nextQuestionButton
               }
-              console.log('On press : currentChoiceId :', answer);
-              console.log(
-                'On press : correctAnwerChoice :',
-                currentQuestionAnswer
-              );
-              setCurrentQuestionIndex(currentQuestionIndex + 1);
-              if (quizQuestion)
-                setCurrentQuestion(quizQuestion[currentQuestionIndex + 1]);
-              setAnswer('');
-            } else {
-              //TODO: Show result page
-              let finalScore = score;
-              if (currentQuestionAnswer.match(answer)) {
-                finalScore = score + 1;
-              }
-              console.log('On press : currentChoiceId :', answer);
-              console.log(
-                'On press : correctAnwerChoice :',
-                currentQuestionAnswer
-              );
-              console.log(
-                'Congrats you scored :' + finalScore + '/' + totalQuestion
-              );
+              onPress={() => {
+                if (currentQuestionIndex + 1 != totalQuestion) {
+                  if (currentQuestionAnswer.match(answer)) {
+                    setScore(score + 1);
+                  }
+                  console.log('On press : currentChoiceId :', answer);
+                  console.log(
+                    'On press : correctAnwerChoice :',
+                    currentQuestionAnswer
+                  );
+                  setCurrentQuestionIndex(currentQuestionIndex + 1);
+                  if (quizQuestion)
+                    setCurrentQuestion(quizQuestion[currentQuestionIndex + 1]);
+                  setAnswer('');
+                } else {
+                  //TODO: Show result page
+                  let finalScore = score;
+                  if (currentQuestionAnswer.match(answer)) {
+                    finalScore = score + 1;
+                  }
+                  console.log('On press : currentChoiceId :', answer);
+                  console.log(
+                    'On press : correctAnwerChoice :',
+                    currentQuestionAnswer
+                  );
+                  console.log(
+                    'Congrats you scored :' + finalScore + '/' + totalQuestion
+                  );
 
-              router.replace({
-                pathname: '/(tabs)/quiz/result',
-                params: {
-                  quiz_id: quiz_id,
-                  quiz_title: quiz_title,
-                  score: finalScore,
-                  totalQuestion: totalQuestion,
-                },
-              });
-            }
-          }}
-        >
-          <Text style={[styles.nextQuestionButtonLabel]} weight="semibold">
-            {currentQuestionIndex + 1 == totalQuestion
-              ? 'Finish'
-              : 'Next Question'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+                  router.replace({
+                    pathname: '/(tabs)/quiz/result',
+                    params: {
+                      quiz_id: quiz_id,
+                      quiz_title: quiz_title,
+                      score: finalScore,
+                      totalQuestion: totalQuestion,
+                    },
+                  });
+                }
+              }}
+            >
+              <Text style={[styles.nextQuestionButtonLabel]} weight="semibold">
+                {currentQuestionIndex + 1 == totalQuestion
+                  ? 'Finish'
+                  : 'Next Question'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </View>
   );
 }

@@ -1,36 +1,32 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 import { Text, View } from '../../../components/Themed';
 import { SIZES } from '../../../constants/Theme';
 import Colors from '../../../constants/Colors';
 import { ThemeUtils } from '../../../utils/ThemeUtils';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { QuizViewItem } from '../../../components/QuizViewItem';
 import { QuizSubjectViewItem } from '../../../components/QuizSubjectViewItem';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { getQuizzesByUserId } from '../../../services/quiz';
 import { useIsFocused } from '@react-navigation/native';
+import { MainScreenLoader } from '../../../components/MainScreenLoader';
 
+const width = Dimensions.get('window').width - SIZES.padding * 2;
 export default function QuizScreen() {
   const [quizzes, setQuizzes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const {
-    themeTextStyle,
-    themeBackgroundStyle,
-    themeSecondaryBackgroundStyle,
-  } = ThemeUtils();
+  const { themeTextStyle, themeBackgroundStyle } = ThemeUtils();
   const isFocused = useIsFocused();
   useEffect(() => {
     (async () => {
       const quizzes = await getQuizzesByUserId(1);
       setQuizzes(quizzes.subjects);
+      setTimeout(() => setLoading(false), 1000);
     })();
   }, [isFocused]);
-  const recentQuiz = [] as any;
 
-  const quizze = [] as any;
   return (
     <View style={styles.container}>
       <View style={[styles.titleHeader, themeBackgroundStyle]}>
@@ -59,27 +55,31 @@ export default function QuizScreen() {
       <View style={{ flex: 2.3 }}>
         <Text style={{ marginVertical: 10 }}>Continue Studying</Text>
         {/* Quizes */}
-        <ScrollView style={{ flex: 1 }}>
-          {quizzes &&
-            quizzes.map((item: any) => {
-              return (
-                <TouchableOpacity
-                  key={item.subject_id}
-                  onPress={() => {
-                    router.push({
-                      pathname: '/(tabs)/quiz/subjectquiz',
-                      params: {
-                        subject_id: item.subject_id,
-                        subject_title: item.subject_title,
-                      },
-                    });
-                  }}
-                >
-                  <QuizSubjectViewItem item={item} />
-                </TouchableOpacity>
-              );
-            })}
-        </ScrollView>
+        {loading ? (
+          <MainScreenLoader />
+        ) : (
+          <ScrollView style={{ flex: 1 }}>
+            {quizzes &&
+              quizzes.map((item: any) => {
+                return (
+                  <TouchableOpacity
+                    key={item.subject_id}
+                    onPress={() => {
+                      router.push({
+                        pathname: '/(tabs)/quiz/subjectquiz',
+                        params: {
+                          subject_id: item.subject_id,
+                          subject_title: item.subject_title,
+                        },
+                      });
+                    }}
+                  >
+                    <QuizSubjectViewItem item={item} />
+                  </TouchableOpacity>
+                );
+              })}
+          </ScrollView>
+        )}
       </View>
       {/* Import Quizes */}
       <View style={{ flex: 1 }}>

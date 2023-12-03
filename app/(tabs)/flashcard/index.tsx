@@ -1,31 +1,22 @@
-import { Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Text, View } from '../../../components/Themed';
-import { ThemeUtils } from '../../../utils/ThemeUtils';
 import { SIZES } from '../../../constants/Theme';
 import {
   FlatList,
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-import {
-  SubjectFlashcardType,
-  subjectsData,
-  SubjectType,
-} from '../../../constants/Data';
-import { ListViewItem } from '../../../components/ListViewItem';
+import { SubjectFlashcardType, SubjectType } from '../../../constants/Data';
 import Colors from '../../../constants/Colors';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useIsFocused } from '@react-navigation/native';
 import { getFlashcardsByUserId } from '../../../services/flashcards';
 import { DeckListViewItem } from '../../../components/DeckListViewItem';
+import { MainScreenLoader } from '../../../components/MainScreenLoader';
 
 export default function FlashcardScreen() {
+  const [loading, setLoading] = useState(true);
   const [searchValue, setSearchValue] = useState('');
   const [subjects, setSubjects] = useState<SubjectFlashcardType[]>();
   const [unfilteredSubjects, setUnfilteredSubjects] =
@@ -39,6 +30,7 @@ export default function FlashcardScreen() {
       console.log('result.subjects : ', result.subjects[0].flashcards);
       setSubjects(result.subjects);
       setUnfilteredSubjects(result.subjects);
+      setTimeout(() => setLoading(false), 1000);
     })();
   }, [isFocused]);
 
@@ -80,32 +72,36 @@ export default function FlashcardScreen() {
       </View>
       <View style={{ flex: 7 }}>
         {/* List View */}
-        <FlatList
-          keyExtractor={(item) => item.subject_id}
-          data={subjects}
-          renderItem={({ item }) => (
-            <TouchableWithoutFeedback
-              onPress={() => {
-                console.log('tocuhanle print item :', item);
-                console.log('tocuhanle print flashcards :', item.flashcards);
-                console.log(
-                  'tocuhanle print json flashcards :',
-                  JSON.stringify(item.flashcards)
-                );
-                router.push({
-                  pathname: '/(tabs)/flashcard/decks',
-                  params: {
-                    subject_id: item.subject_id,
-                    subject_category: item.subject_category,
-                    subject_title: item.subject_title,
-                  },
-                });
-              }}
-            >
-              <DeckListViewItem item={item} />
-            </TouchableWithoutFeedback>
-          )}
-        />
+        {loading ? (
+          <MainScreenLoader />
+        ) : (
+          <FlatList
+            keyExtractor={(item) => item.subject_id}
+            data={subjects}
+            renderItem={({ item }) => (
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  console.log('tocuhanle print item :', item);
+                  console.log('tocuhanle print flashcards :', item.flashcards);
+                  console.log(
+                    'tocuhanle print json flashcards :',
+                    JSON.stringify(item.flashcards)
+                  );
+                  router.push({
+                    pathname: '/(tabs)/flashcard/decks',
+                    params: {
+                      subject_id: item.subject_id,
+                      subject_category: item.subject_category,
+                      subject_title: item.subject_title,
+                    },
+                  });
+                }}
+              >
+                <DeckListViewItem item={item} />
+              </TouchableWithoutFeedback>
+            )}
+          />
+        )}
       </View>
     </View>
   );

@@ -18,7 +18,7 @@ export function QuizViewItem({ item }: QuestionViewItemProp) {
           <Text style={styles.itemTitle} weight="semibold">
             {item.quiz_title}
           </Text>
-          <Text style={styles.itemScore} weight="medium">
+          <Text style={styles.itemScore} weight="bold">
             {item.quiz_score == -1 || item.questions === undefined
               ? 'Unattempted'
               : 'Score : ' + item.quiz_score + '/' + item.questions.length}
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   itemTitle: {
-    color: Colors.default.slate500,
+    color: Colors.default.slate100,
     marginBottom: 8,
   },
   itemScore: {
