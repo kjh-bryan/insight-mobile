@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import { Text, View } from '../../../components/Themed';
 import { router, useLocalSearchParams } from 'expo-router';
 import { NoteType } from '../../../constants/Data';
@@ -13,7 +13,9 @@ import {
 import Colors from '../../../constants/Colors';
 import { CardViewItem } from '../../../components/CardViewItem';
 import { getNotesBySubjectId } from '../../../services/notes';
+import { NoteLoader } from '../../../components/NoteLoader';
 
+const width = Dimensions.get('window').width - SIZES.padding * 2;
 export default function NotesScreen() {
   const { id, category, title } = useLocalSearchParams<{
     id: string;
@@ -22,11 +24,8 @@ export default function NotesScreen() {
   }>();
   const [noteItems, setNoteItem] = useState<NoteType[]>();
   const [unfilteredNoteItems, setUnfilteredNoteItem] = useState<NoteType[]>();
-  const {
-    themeBackgroundStyle,
-    themeSecondaryBackgroundStyle,
-    themeTextStyle,
-  } = ThemeUtils();
+  const [loading, setLoading] = useState(true);
+  const { themeTextStyle } = ThemeUtils();
   const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
@@ -35,6 +34,7 @@ export default function NotesScreen() {
 
       setNoteItem(result.result);
       setUnfilteredNoteItem(result.result);
+      setTimeout(() => setLoading(false), 1000);
     })();
   }, []);
 
@@ -65,32 +65,36 @@ export default function NotesScreen() {
         onChangeText={(text) => handleSearchInput(text)}
       />
       <View style={styles.cardViewContainer}>
-        <FlatList
-          numColumns={2}
-          columnWrapperStyle={{
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-          }}
-          data={noteItems}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => {
-                // open pdf
-                console.log('Print pdf url : ', item.note_url);
-                router.push({
-                  pathname: '/(tabs)/subjects/pdf',
-                  params: {
-                    src: item.note_url ?? '',
-                    title: item.note_title,
-                  },
-                });
-              }}
-              disabled={item.note_url == null}
-            >
-              <CardViewItem item={item} />
-            </TouchableOpacity>
-          )}
-        />
+        {loading ? (
+          <NoteLoader width={width} />
+        ) : (
+          <FlatList
+            numColumns={2}
+            columnWrapperStyle={{
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+            }}
+            data={noteItems}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  // open pdf
+                  console.log('Print pdf url : ', item.note_url);
+                  router.push({
+                    pathname: '/(tabs)/subjects/pdf',
+                    params: {
+                      src: item.note_url ?? '',
+                      title: item.note_title,
+                    },
+                  });
+                }}
+                disabled={item.note_url == null}
+              >
+                <CardViewItem item={item} />
+              </TouchableOpacity>
+            )}
+          />
+        )}
       </View>
     </View>
   );

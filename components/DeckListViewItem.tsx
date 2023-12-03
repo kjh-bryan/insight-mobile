@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.base,
   },
   itemCategory: {
-    color: Colors.default.slate500,
+    color: Colors.default.slate200,
     fontSize: SIZES.h5,
     marginBottom: SIZES.base,
   },

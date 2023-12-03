@@ -23,13 +23,10 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { getNotesByUserId } from '../../../services/notes';
 import { useIsFocused } from '@react-navigation/native';
+import { MainScreenLoader } from '../../../components/MainScreenLoader';
 
 export default function SubjectsScreen() {
-  const {
-    themeTextStyle,
-    themeBackgroundStyle,
-    themeSecondaryBackgroundStyle,
-  } = ThemeUtils();
+  const [loading, setLoading] = useState(true);
   const [searchValue, setSearchValue] = useState('');
   const [subjects, setSubjects] = useState<SubjectType[]>();
   const [unfilteredSubjectsNote, setUnfilteredSubjectsNote] =
@@ -42,6 +39,7 @@ export default function SubjectsScreen() {
       console.log('SubjectsScreen result :', result);
       setSubjects(result.subjects);
       setUnfilteredSubjectsNote(result.subjects);
+      setTimeout(() => setLoading(false), 1000);
     })();
   }, [isFocused]);
 
@@ -84,26 +82,30 @@ export default function SubjectsScreen() {
       </View>
       <View style={{ flex: 6 }}>
         {/* List View */}
-        <FlatList
-          keyExtractor={(item) => item.subject_id}
-          data={subjects}
-          renderItem={({ item }: { item: SubjectNoteType }) => (
-            <TouchableWithoutFeedback
-              onPress={() => {
-                router.push({
-                  pathname: '/(tabs)/subjects/notes',
-                  params: {
-                    id: item.subject_id,
-                    category: item.subject_category,
-                    title: item.subject_title,
-                  },
-                });
-              }}
-            >
-              <ListViewItem item={item} />
-            </TouchableWithoutFeedback>
-          )}
-        />
+        {loading ? (
+          <MainScreenLoader />
+        ) : (
+          <FlatList
+            keyExtractor={(item) => item.subject_id}
+            data={subjects}
+            renderItem={({ item }: { item: SubjectNoteType }) => (
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  router.push({
+                    pathname: '/(tabs)/subjects/notes',
+                    params: {
+                      id: item.subject_id,
+                      category: item.subject_category,
+                      title: item.subject_title,
+                    },
+                  });
+                }}
+              >
+                <ListViewItem item={item} />
+              </TouchableWithoutFeedback>
+            )}
+          />
+        )}
       </View>
       <View style={{ flex: 1.5 }}>
         {/* Import Lecture Notes */}
