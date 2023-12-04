@@ -61,7 +61,6 @@ export default function FlashcardScreen() {
   return (
     <View style={[styles.container]}>
       <View style={[{ flex: 1.5 }]}>
-        {/* Title */}
         <Text style={[styles.headerTitle]}>Flashcard</Text>
         <TextInput
           style={styles.searchInput}

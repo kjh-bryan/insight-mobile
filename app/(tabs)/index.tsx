@@ -21,6 +21,8 @@ import {
 } from '@expo/vector-icons';
 import { CustomModal } from '../../components/Modal';
 import { ThemeUtils } from '../../utils/ThemeUtils';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 import { Audio } from 'expo-av';
 import {
   AndroidAudioEncoder,
