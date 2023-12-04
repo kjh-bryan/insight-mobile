@@ -1,14 +1,45 @@
-import { StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { SIZES } from '../../constants/Theme';
 import { Button } from 'react-native-paper';
 import Colors from '../../constants/Colors';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
+import { loginUser } from '../../services/user';
+import { useDispatch } from 'react-redux';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const resetFormFields = () => {
+    setUsername("");
+    setPassword("");
+  };
+
+  const dispatch = useDispatch();
+
+  const setUserInfo = (userId: any, name: any, username: any, email: any, password: any) => {
+    dispatch({
+      type: 'SET_USER_INFO',
+      payload: { userId, name, username, email, password },
+    });
+  };
+
+  const loginFailed = (errorMessage: any) =>
+  Alert.alert(
+    'Error',
+    errorMessage || 'An error occurred while trying to login!',
+    [
+      {
+        text: 'Try again',
+        style: 'cancel',
+      },
+    ],
+    {
+      cancelable: true,
+    },
+  );
 
   return (
     <View style={[styles.container]}>
@@ -21,10 +52,9 @@ export default function LoginScreen() {
       </Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
-        onChangeText={(text) => setEmail(text)}
-        value={email}
-        keyboardType="email-address"
+        placeholder="Username"
+        onChangeText={(text) => setUsername(text)}
+        value={username}
         autoCapitalize="none"
       />
       <TextInput
@@ -37,8 +67,23 @@ export default function LoginScreen() {
       <Button
         style={[styles.loginbutton]}
         mode="contained"
-        onPress={() => {
-          router.push({ pathname: '/(tabs)' });
+        onPress={async() => {
+          try {
+            const result = await loginUser(username, password);
+            if (result && result.message) {
+              console.log('User Screen: Login error:', result.message);
+              loginFailed('Invalid Username or Password!');
+            } else if (result && result.user.user_id) {
+              console.log('User Screen: Successful login. User ID:', result.user.user_id);
+              setUserInfo(result.user.user_id, result.user.name, result.user.username, result.user.email, result.user.password);
+              router.push({pathname: '/(tabs)'});
+              resetFormFields();
+            } else {
+              console.log('User Screen: Unexpected result:', result);
+            }
+          } catch(error) {
+            console.log('User Screen: Registration error:', error);
+          }
         }}
       >
         Login

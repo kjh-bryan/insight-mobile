@@ -25,6 +25,8 @@ import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { ThemeUtils } from '../utils/ThemeUtils';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
+import store from "../redux/store";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -78,7 +80,8 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider
+    <Provider store={ store }>
+      <ThemeProvider
       value={colorScheme === 'light' ? DefaultTheme : DefaultTheme}
     >
       <SafeAreaView style={{ flex: 1 }}>
@@ -89,5 +92,7 @@ function RootLayoutNav() {
         </Stack>
       </SafeAreaView>
     </ThemeProvider>
+    </Provider>
+    
   );
 }
