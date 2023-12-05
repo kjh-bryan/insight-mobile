@@ -23,6 +23,9 @@ import { getFlashcardsByUserId } from '../../../services/flashcards';
 import { router } from 'expo-router';
 import { Button } from 'react-native-paper';
 import { getQuizzesByUserId } from '../../../services/quiz';
+import Animated from 'react-native-reanimated';
+import Collapsible from 'react-native-collapsible';
+import Accordion from 'react-native-collapsible/Accordion';
 
 export default function ProfileScreen() {
   const dispatch = useDispatch();
@@ -40,8 +43,35 @@ export default function ProfileScreen() {
   const [subjectSection, setSubjectSection] = useState([]);
 
   const { userId, username } = useSelector((state: RootState) => state.user);
+  const [activeSections, setActiveSections] = useState([]);
+  const [collapsed, setCollapsed] = useState(true);
+  const [multipleSelect, setMultipleSelect] = useState(false);
+
+  const toggleExpanded = () => {
+    setCollapsed(!collapsed);
+  };
+  const setSections = (sections: any) => {
+    setActiveSections(sections.includes(undefined) ? [] : sections);
+  };
   const testContent = () => {
     return <Button>Testing</Button>;
+  };
+  const renderHeader = (section: any, _: any, isActive: any) => {
+    return (
+      <View style={[styles.header, isActive ? styles.active : styles.inactive]}>
+        <Text>{section.title}</Text>
+      </View>
+    );
+  };
+
+  const renderContent = (section: any, _: any, isActive: any) => {
+    return (
+      <View
+        style={[styles.content, isActive ? styles.active : styles.inactive]}
+      >
+        <Text>{section.content}</Text>
+      </View>
+    );
   };
   useEffect(() => {
     (async () => {
@@ -98,15 +128,34 @@ export default function ProfileScreen() {
             <Text style={styles.boxNumber}>{numberOfQuiz}</Text>
             <Text style={styles.boxTitle}>Quizzes</Text>
           </View> */}
-          {quizzes &&
+          {/* {quizzes &&
             quizzes.map((quiz: any) => {
               return (
                 <View style={{ flex: 1 }}>
                   <Text>Subject : {quiz.subject_title}</Text>
                 </View>
               );
-            })}
+            })} */}
         </View>
+        <Collapsible collapsed={collapsed} align='center'>
+          <View style={styles.content}>
+            <Text>
+              Bacon ipsum dolor amet chuck turducken landjaeger tongue spare
+              ribs
+            </Text>
+          </View>
+        </Collapsible>
+        <Accordion
+          activeSections={activeSections}
+          sections={subjectSection}
+          touchableComponent={TouchableOpacity}
+          expandMultiple={multipleSelect}
+          renderHeader={renderHeader}
+          renderContent={renderContent}
+          duration={400}
+          onChange={setSections}
+          renderAsFlatList={false}
+        />
       </ScrollView>
       <Button
         style={[styles.editButton]}
@@ -197,5 +246,19 @@ const styles = StyleSheet.create({
     color: Colors.default.primary,
     textAlign: 'center',
     fontWeight: 'bold',
+  },
+  active: {
+    backgroundColor: 'rgba(255,255,255,1)',
+  },
+  inactive: {
+    backgroundColor: 'rgba(245,252,255,1)',
+  },
+  header: {
+    backgroundColor: '#F5FCFF',
+    padding: 10,
+  },
+  content: {
+    padding: 20,
+    backgroundColor: '#fff',
   },
 });
