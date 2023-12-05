@@ -4,6 +4,7 @@ import {
   Image,
   TextInput,
   Modal,
+  Alert,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -96,6 +97,20 @@ export default function ProfileScreen() {
     router.push({ pathname: '/(access)/login' });
   };
 
+  const showConfirmDialog = () => {
+    return Alert.alert('Are your sure?', 'Are you sure you want to sign out?', [
+      {
+        text: 'No',
+      },
+      {
+        text: 'Yes',
+        onPress: () => {
+          handleLogout();
+        },
+      },
+    ]);
+  };
+
   return (
     <View style={[styles.container]}>
       <Text style={[styles.title, themeTextStyle]}>Hello,</Text>
@@ -170,7 +185,7 @@ export default function ProfileScreen() {
         style={[styles.logoutButton]}
         mode='contained'
         onPress={() => {
-          handleLogout();
+          showConfirmDialog();
         }}
       >
         <Text style={[styles.logoutButtonText]}>Sign Out</Text>
