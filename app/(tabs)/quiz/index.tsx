@@ -11,17 +11,21 @@ import { useEffect, useState } from 'react';
 import { getQuizzesByUserId } from '../../../services/quiz';
 import { useIsFocused } from '@react-navigation/native';
 import { MainScreenLoader } from '../../../components/MainScreenLoader';
+import { RootState } from '../../../redux/store';
+import { useSelector } from 'react-redux';
 
 const width = Dimensions.get('window').width - SIZES.padding * 2;
 export default function QuizScreen() {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { userId } = useSelector((state: RootState) => state.user);
+
   const { themeTextStyle, themeBackgroundStyle } = ThemeUtils();
   const isFocused = useIsFocused();
   useEffect(() => {
     (async () => {
-      const quizzes = await getQuizzesByUserId(1);
+      const quizzes = await getQuizzesByUserId(Number(userId));
       setQuizzes(quizzes.subjects);
       setTimeout(() => setLoading(false), 1000);
     })();

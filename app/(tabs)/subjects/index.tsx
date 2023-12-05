@@ -24,6 +24,8 @@ import { router } from 'expo-router';
 import { getNotesByUserId } from '../../../services/notes';
 import { useIsFocused } from '@react-navigation/native';
 import { MainScreenLoader } from '../../../components/MainScreenLoader';
+import { RootState } from '../../../redux/store';
+import { useSelector } from 'react-redux';
 
 export default function SubjectsScreen() {
   const [loading, setLoading] = useState(true);
@@ -33,9 +35,11 @@ export default function SubjectsScreen() {
     useState<SubjectType[]>();
   const isFocused = useIsFocused();
 
+  const { userId } = useSelector((state: RootState) => state.user);
+
   useEffect(() => {
     (async () => {
-      const result = await getNotesByUserId(1);
+      const result = await getNotesByUserId(Number(userId));
       console.log('SubjectsScreen result :', result);
       setSubjects(result.subjects);
       setUnfilteredSubjectsNote(result.subjects);
