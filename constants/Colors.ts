@@ -2,7 +2,7 @@ const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
 
 // const primaryColor = '#FFBEAC';
-const primaryColor = '#0080FF';
+const primaryColor = '#093D65';
 const complementGreen = '#3F826D';
 const complementRed = '#BF211E';
 const loaderBackground = '#F3F3F3';
