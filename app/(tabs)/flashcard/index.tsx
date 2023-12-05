@@ -14,6 +14,8 @@ import { useIsFocused } from '@react-navigation/native';
 import { getFlashcardsByUserId } from '../../../services/flashcards';
 import { DeckListViewItem } from '../../../components/DeckListViewItem';
 import { MainScreenLoader } from '../../../components/MainScreenLoader';
+import { RootState } from '../../../redux/store';
+import { useSelector } from 'react-redux';
 
 export default function FlashcardScreen() {
   const [loading, setLoading] = useState(true);
@@ -22,9 +24,12 @@ export default function FlashcardScreen() {
   const [unfilteredSubjects, setUnfilteredSubjects] =
     useState<SubjectFlashcardType[]>();
   const isFocused = useIsFocused();
+
+  const { userId } = useSelector((state: RootState) => state.user);
+
   useEffect(() => {
     (async () => {
-      const result = await getFlashcardsByUserId(1);
+      const result = await getFlashcardsByUserId(Number(userId));
       console.log('Flashcard Screen result :', result);
       // console.log('result.subjects : ', result.subjects);
       console.log('result.subjects : ', result.subjects[0].flashcards);

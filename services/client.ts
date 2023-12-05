@@ -7,6 +7,6 @@ const homeUrl = '192.168.68.67';
 const outsideUrl = '192.168.1.80';
 const hostedURL = 'insight-sg-backend.azurewebsites.net';
 
-const client = axios.create({ baseURL: `http://${hostedURL}` });
+const client = axios.create({ baseURL: `https://${hostedURL}` });
 
 export default client;
