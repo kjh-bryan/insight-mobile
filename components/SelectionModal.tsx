@@ -19,6 +19,8 @@ import { RadioButton, TextInput } from 'react-native-paper';
 import { SubjectType } from '../constants/Data';
 import { Entypo } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 type SelectionModalProps = {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -49,18 +51,22 @@ export function SelectionModal({
   const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState({});
   const isFocused = useIsFocused();
+
+  const { userId } = useSelector((state: RootState) => state.user);
   useEffect(() => {
     (async () => {
-      const getSubjects = await getSubjectsByUserId(1);
-      const subject = getSubjects;
-      setSubjects(subject.subjects);
-      console.log('Check for undefined subjects', typeof subjects);
-      if (subjects !== null && subjects.length > 0) {
-        setChoice(subjects[0].subject_id);
-      } else {
-        console.log(subjects);
+      if (showModal) {
+        const getSubjects = await getSubjectsByUserId(Number(userId));
+        const subject = getSubjects;
+        setSubjects(subject.subjects);
+        console.log('Check for undefined subjects', typeof subjects);
+        if (subjects != null) {
+          setChoice(subjects[0].subject_id);
+        } else {
+          console.log(subjects);
+        }
+        console.log('end');
       }
-      console.log('end');
     })();
   }, [isFocused]);
 

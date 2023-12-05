@@ -1,7 +1,11 @@
-import client from './client';
-
+import intialiseClient from './client';
+import * as SecureStore from 'expo-secure-store';
 export const getNotesByUserId = async (user_id: number) => {
   try {
+    const client = await intialiseClient();
+    if (!client) {
+      return null;
+    }
     const result = await client.get('/api/subjects/note/' + user_id);
     if (result.status === 200) {
       console.log('result.status');
@@ -20,6 +24,10 @@ export const getNotesByUserId = async (user_id: number) => {
 
 export const getNotesBySubjectId = async (subject_id: number) => {
   try {
+    const client = await intialiseClient();
+    if (!client) {
+      return null;
+    }
     const result = await client.get('/api/notes/' + subject_id);
     if (result.status === 200) {
       console.log('result.status');
@@ -42,6 +50,10 @@ export const createNotesBySubjectId = async (
   file: any
 ) => {
   try {
+    const client = await intialiseClient();
+    if (!client) {
+      return null;
+    }
     const formData = new FormData();
     formData.append('note_title', note_title);
     formData.append('subject_id', subject_id.toString());

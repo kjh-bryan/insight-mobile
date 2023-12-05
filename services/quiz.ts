@@ -1,8 +1,13 @@
 import { QuestionType } from '../constants/Data';
-import client from './client';
+import intialiseClient from './client';
 
 export const getQuizzesByUserId = async (user_id: number) => {
   try {
+    const client = await intialiseClient();
+
+    if (!client) {
+      return null;
+    }
     const result = await client.get('/api/subjects/quiz/' + user_id);
     if (result.status === 200) {
       console.log('result.status');
@@ -21,6 +26,11 @@ export const getQuizzesByUserId = async (user_id: number) => {
 
 export const getQuizzesBySubjectId = async (subject_id: number) => {
   try {
+    const client = await intialiseClient();
+
+    if (!client) {
+      return null;
+    }
     const result = await client.get('/api/quiz/' + subject_id);
     if (result.status === 200) {
       console.log('result.status', result.data);
@@ -39,6 +49,11 @@ export const getQuizzesBySubjectId = async (subject_id: number) => {
 
 export const getQuestionByQuizId = async (quiz_id: number) => {
   try {
+    const client = await intialiseClient();
+
+    if (!client) {
+      return null;
+    }
     const result = await client.get('/api/question/' + quiz_id);
     if (result.status === 200) {
       console.log('result.status', result.data);
@@ -61,6 +76,11 @@ export const createQuizBySubjectId = async (
   quiz: []
 ) => {
   try {
+    const client = await intialiseClient();
+
+    if (!client) {
+      return null;
+    }
     const result = await client.post('/api/quiz', {
       subject_id,
       quiz_title,
@@ -86,6 +106,11 @@ export const updateQuizScoreByQuizId = async (
   quiz_score: number
 ) => {
   try {
+    const client = await intialiseClient();
+
+    if (!client) {
+      return null;
+    }
     const result = await client.post('/api/quizscore', {
       quiz_id,
       quiz_score,

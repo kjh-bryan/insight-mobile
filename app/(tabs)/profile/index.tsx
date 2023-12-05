@@ -25,8 +25,7 @@ import { Button } from 'react-native-paper';
 import { getQuizzesByUserId } from '../../../services/quiz';
 
 export default function ProfileScreen() {
-
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
 
   const {
     themeTextStyle,
@@ -37,9 +36,13 @@ export default function ProfileScreen() {
   const [numberOfQuiz, setNumberOfQuiz] = useState(0);
   const [numberOfSubject, setNumberOfSubject] = useState(0);
   const [numberOfFlashcard, setNumberOfFlashcard] = useState(0);
+  const [quizzes, setQuizzes] = useState([]);
+  const [subjectSection, setSubjectSection] = useState([]);
 
   const { userId, username } = useSelector((state: RootState) => state.user);
-
+  const testContent = () => {
+    return <Button>Testing</Button>;
+  };
   useEffect(() => {
     (async () => {
       const quizResult = await getQuizzesByUserId(Number(userId));
@@ -48,42 +51,81 @@ export default function ProfileScreen() {
       setNumberOfQuiz(Object.keys(quizResult.subjects).length);
       setNumberOfSubject(Object.keys(notesResult.subjects).length);
       setNumberOfFlashcard(Object.keys(flashcardResult.subjects).length);
+      setQuizzes(quizResult.subjects);
+
+      const SECTION = quizResult.subjects.map((quiz: any) => ({
+        title: quiz.subject_title,
+        content: <Button>Test</Button>,
+      }));
+      setSubjectSection(SECTION);
     })();
-  });
+  }, []);
 
   const handleLogout = () => {
     dispatch({ type: 'LOGOUT' });
-    router.push({pathname: '/(access)/login'});
+    router.push({ pathname: '/(access)/login' });
   };
-
 
   return (
     <View style={[styles.container]}>
-      <Text style={[styles.title, themeTextStyle]}>
-          Hello,
-        </Text>
-        <Text style={styles.titleColor}>{username.toUpperCase()}</Text>
+      <Text style={[styles.title, themeTextStyle]}>Hello,</Text>
+      <Text style={styles.titleColor}>{username.toUpperCase()}</Text>
+      <View style={styles.boxContainer}>
+        <View style={styles.box}>
+          <Text style={styles.boxNumber}>{numberOfQuiz}</Text>
+          <Text style={styles.boxTitle}>Quizzes</Text>
+        </View>
+        <View style={styles.box}>
+          <Text style={styles.boxNumber}>{numberOfSubject}</Text>
+          <Text style={styles.boxTitle}>Subjects</Text>
+        </View>
+        <View style={styles.box}>
+          <Text style={styles.boxNumber}>{numberOfFlashcard}</Text>
+          <Text style={styles.boxTitle}>Flash</Text>
+          <Text style={styles.boxTitle}>cards</Text>
+        </View>
+      </View>
+      <View>
+        <Text>Your Quiz</Text>
+      </View>
+      <ScrollView contentContainerStyle={{ flex: 1 }}>
         <View style={styles.boxContainer}>
+          {/* <View style={styles.box}>
+            <Text style={styles.boxNumber}>{numberOfQuiz}</Text>
+            <Text style={styles.boxTitle}>Completed</Text>
+          </View>
           <View style={styles.box}>
             <Text style={styles.boxNumber}>{numberOfQuiz}</Text>
             <Text style={styles.boxTitle}>Quizzes</Text>
-          </View>
-          <View style={styles.box}>
-            <Text style={styles.boxNumber}>{numberOfSubject}</Text>
-            <Text style={styles.boxTitle}>Subjects</Text>
-          </View>
-          <View style={styles.box}>
-            <Text style={styles.boxNumber}>{numberOfFlashcard}</Text>
-            <Text style={styles.boxTitle}>Flash</Text>
-            <Text style={styles.boxTitle}>cards</Text>
-          </View>
+          </View> */}
+          {quizzes &&
+            quizzes.map((quiz: any) => {
+              return (
+                <View style={{ flex: 1 }}>
+                  <Text>Subject : {quiz.subject_title}</Text>
+                </View>
+              );
+            })}
         </View>
-        <Button style={[styles.editButton]} mode="contained" onPress={() => {router.push({pathname: '/(tabs)/profile/edit'})}}>
-          <Text style={[styles.editButtonText]}>Edit Profile</Text>
-        </Button>
-        <Button style={[styles.logoutButton]} mode="contained" onPress={() => {handleLogout();}}>
-          <Text style={[styles.logoutButtonText]}>Sign Out</Text>
-        </Button>
+      </ScrollView>
+      <Button
+        style={[styles.editButton]}
+        mode='contained'
+        onPress={() => {
+          router.push({ pathname: '/(tabs)/profile/edit' });
+        }}
+      >
+        <Text style={[styles.editButtonText]}>Edit Profile</Text>
+      </Button>
+      <Button
+        style={[styles.logoutButton]}
+        mode='contained'
+        onPress={() => {
+          handleLogout();
+        }}
+      >
+        <Text style={[styles.logoutButtonText]}>Sign Out</Text>
+      </Button>
     </View>
   );
 }
@@ -137,7 +179,7 @@ const styles = StyleSheet.create({
   editButton: {
     width: '100%',
     marginVertical: 10,
-    backgroundColor: Colors.default.primary
+    backgroundColor: Colors.default.primary,
   },
   editButtonText: {
     color: 'white',

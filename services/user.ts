@@ -1,7 +1,12 @@
-import client from './client';
+import intialiseClient from './client';
 
 export const loginUser = async (username: string, password: string) => {
   try {
+    const client = await intialiseClient();
+
+    if (!client) {
+      return null;
+    }
     const result = await client.get('/api/loginuser', {
       params: {
         username: username,
@@ -21,7 +26,7 @@ export const loginUser = async (username: string, password: string) => {
     }
     return { error: error.message || error };
   }
-}
+};
 
 export const registerUser = async (
   username: string,
@@ -30,6 +35,11 @@ export const registerUser = async (
   name: string
 ) => {
   try {
+    const client = await intialiseClient();
+
+    if (!client) {
+      return null;
+    }
     const result = await client.post('/api/registeruser', {
       username,
       password,
@@ -59,6 +69,11 @@ export const updateUser = async (
   name: string
 ) => {
   try {
+    const client = await intialiseClient();
+
+    if (!client) {
+      return null;
+    }
     const result = await client.put('/api/updateuser/', {
       user_id,
       username,

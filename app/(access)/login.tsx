@@ -1,4 +1,10 @@
-import { StyleSheet, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
+import {
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { SIZES } from '../../constants/Theme';
 import { Button } from 'react-native-paper';
@@ -7,19 +13,26 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { loginUser } from '../../services/user';
 import { useDispatch } from 'react-redux';
+import * as SecureStore from 'expo-secure-store';
 
 export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const resetFormFields = () => {
-    setUsername("");
-    setPassword("");
+    setUsername('');
+    setPassword('');
   };
 
   const dispatch = useDispatch();
 
-  const setUserInfo = (userId: any, name: any, username: any, email: any, password: any) => {
+  const setUserInfo = (
+    userId: any,
+    name: any,
+    username: any,
+    email: any,
+    password: any
+  ) => {
     dispatch({
       type: 'SET_USER_INFO',
       payload: { userId, name, username, email, password },
@@ -27,19 +40,19 @@ export default function LoginScreen() {
   };
 
   const loginFailed = (errorMessage: any) =>
-  Alert.alert(
-    'Error',
-    errorMessage || 'An error occurred while trying to login!',
-    [
+    Alert.alert(
+      'Error',
+      errorMessage || 'An error occurred while trying to login!',
+      [
+        {
+          text: 'Try again',
+          style: 'cancel',
+        },
+      ],
       {
-        text: 'Try again',
-        style: 'cancel',
-      },
-    ],
-    {
-      cancelable: true,
-    },
-  );
+        cancelable: true,
+      }
+    );
 
   return (
     <View style={[styles.container]}>
@@ -47,41 +60,59 @@ export default function LoginScreen() {
         style={styles.logo}
         source={require('../../assets/images/logo.png')}
       />
-      <Text style={[styles.welcomeText]} weight="bold">
+      <Text style={[styles.welcomeText]} weight='bold'>
         Welcome back!
       </Text>
       <TextInput
         style={styles.input}
-        placeholder="Username"
+        placeholder='Username'
         onChangeText={(text) => setUsername(text)}
         value={username}
-        autoCapitalize="none"
+        autoCapitalize='none'
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder='Password'
         onChangeText={(text) => setPassword(text)}
         value={password}
         secureTextEntry
       />
       <Button
         style={[styles.loginbutton]}
-        mode="contained"
-        onPress={async() => {
+        mode='contained'
+        onPress={async () => {
           try {
             const result = await loginUser(username, password);
             if (result && result.message) {
               console.log('User Screen: Login error:', result.message);
               loginFailed('Invalid Username or Password!');
             } else if (result && result.user.user_id) {
-              console.log('User Screen: Successful login. User ID:', result.user.user_id);
-              setUserInfo(result.user.user_id, result.user.name, result.user.username, result.user.email, result.user.password);
-              router.push({pathname: '/(tabs)'});
+              console.log(
+                'User Screen: Successful login. User ID:',
+                result.user.user_id
+              );
+              console.log('User Screen: Successful login. User ID:', result);
+              setUserInfo(
+                result.user.user_id,
+                result.user.name,
+                result.user.username,
+                result.user.email,
+                result.user.password
+              );
+              await SecureStore.setItemAsync(
+                'access_token',
+                result.user.access_token
+              );
+              console.log(
+                'get secure item : ',
+                await SecureStore.getItemAsync('access_token')
+              );
+              router.push({ pathname: '/(tabs)' });
               resetFormFields();
             } else {
               console.log('User Screen: Unexpected result:', result);
             }
-          } catch(error) {
+          } catch (error) {
             console.log('User Screen: Registration error:', error);
           }
         }}
@@ -92,7 +123,7 @@ export default function LoginScreen() {
         Don't have an account?{' '}
         <TouchableOpacity
           onPress={() => {
-            router.push({pathname: '/register'})
+            router.push({ pathname: '/register' });
           }}
         >
           <Text style={styles.signUpLink}>Sign up</Text>
@@ -127,7 +158,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginVertical: 10,
     backgroundColor: Colors.default.primary,
-    borderRadius: 10
+    borderRadius: 10,
   },
   signUpLink: {
     color: 'blue',
@@ -141,6 +172,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     width: '100%',
     backgroundColor: '#ffffff',
-    borderRadius: 10
+    borderRadius: 10,
   },
 });
