@@ -77,13 +77,13 @@ To have a better view of Insight's functionalities, please view this [demo video
 -->
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!--### Architecture Diagram
+### Architecture Diagram
 
 <div align="center">
  
-<img src="./images/architecture-diagram.jpeg" alt="Architecture Diagram" width="700">
+<img src="./screensimages/Insight Architecture Diagram.png" alt="Architecture Diagram" width="700">
 </div>
--->
+
 ### Built With
 
 - [![Express][express.dev]][express-url]
