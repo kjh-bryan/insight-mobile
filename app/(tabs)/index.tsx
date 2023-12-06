@@ -31,7 +31,6 @@ import {
   IOSOutputFormat,
   Recording,
 } from 'expo-av/build/Audio';
-import { healthCheck, postSpeechToText } from '../../services/speechtotext';
 import { SPEECH_SUBSCRIPTION_KEY, SERVICE_REGION } from '@env';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import { createNotesBySubjectId } from '../../services/notes';
@@ -147,6 +146,7 @@ export default function HomeScreen() {
       document
     );
 
+    console.log('[handleCreateNote] [result] :', result);
     if (!result) {
       handleOnErrorLoadingModal('Failed to create note..');
     } else {
@@ -268,6 +268,8 @@ export default function HomeScreen() {
         setProgressStep(0);
         setLoadingModalProgress(0);
         setSuccessModal(true);
+
+        setDocument(null);
         Animated.timing(scaleValue, {
           toValue: 1,
           useNativeDriver: true,
@@ -279,7 +281,7 @@ export default function HomeScreen() {
 
   const handleOnErrorLoadingModal = async (error: string) => {
     setLoadingModalTitle(error);
-    setTimeout(() => {}, 1000);
+    setTimeout(() => {}, 3000);
     Animated.timing(scaleValue, {
       toValue: 0,
       duration: 300,
@@ -489,7 +491,7 @@ export default function HomeScreen() {
         scaleValue={scaleValue}
         stopFunction={stopRecording}
       >
-        <FontAwesome name="volume-up" color={Colors.light.primary} size={50} />
+        <FontAwesome name='volume-up' color={Colors.light.primary} size={50} />
       </CustomModal>
       <LoadingModal
         showModal={showLoadingModal}
@@ -560,7 +562,7 @@ export default function HomeScreen() {
           }}
         >
           <MaterialIcons
-            name="file-download"
+            name='file-download'
             style={styles.hugeButtonIcon}
             color={Colors.light.primary}
           />
@@ -572,7 +574,7 @@ export default function HomeScreen() {
         <View style={[styles.uploadFileContainer, themeBackgroundStyle]}>
           <View style={[styles.uploadFile, themeBackgroundStyle]}>
             <View style={[styles.uploadFileIcon, themeBackgroundStyle]}>
-              <Ionicons name="document-text" style={styles.fileIcon} />
+              <Ionicons name='document-text' style={styles.fileIcon} />
             </View>
             <View style={[styles.uploadFileDescription, themeBackgroundStyle]}>
               <Text style={[themeTextStyle]}>{document.name}</Text>
@@ -589,7 +591,7 @@ export default function HomeScreen() {
                   selectSubjectOrCreateNew();
                 }}
               >
-                <Text style={[styles.generateButtonText]} weight="bold">
+                <Text style={[styles.generateButtonText]} weight='bold'>
                   Generate Flashcard
                 </Text>
               </TouchableOpacity>
@@ -600,7 +602,7 @@ export default function HomeScreen() {
                   setDocument(null);
                 }}
               >
-                <Entypo name="cross" style={styles.fileCancel} />
+                <Entypo name='cross' style={styles.fileCancel} />
               </TouchableOpacity>
             </View>
           </View>
@@ -702,7 +704,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   generateButtonText: {
-    color: Colors.dark.text,
+    color: Colors.default.white,
   },
   uploadFileCancel: {
     position: 'absolute',

@@ -141,8 +141,15 @@ export type QuizType = {
   quiz_subject_id: number;
   quiz_score: number;
   questions?: QuestionType[];
+  attempts?: [];
 };
 
+export type QuizAttempt = {
+  quiz_attempt_id?: number;
+  quiz_id: number;
+  quiz_score: number;
+  created_at: Date;
+};
 export type QuizSubjectType = {
   subject_title: string;
   quizzes: QuizType[];

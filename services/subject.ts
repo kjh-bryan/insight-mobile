@@ -1,23 +1,27 @@
-import client from './client';
-
+import store from '../redux/store';
+import intialiseClient from './client';
+import * as SecureStore from 'expo-secure-store';
 export const getSubjectsByUserId = async (user_id: number) => {
   try {
     console.log('[getSubjectsByUserId] ');
-    const result = await client.get('/api/subjects/' + user_id);
-    console.log('result, ', result.data.data);
+    const client = await intialiseClient();
 
-    if (result.status === 200) {
-      console.log('result.status');
-      return result.data.data;
+    if (client) {
+      const result = await client.get('/api/subjects/' + user_id);
+      console.log('result, ', result.data.data);
+
+      if (result.status === 200) {
+        console.log('result.status');
+        return result.data.data;
+      } else {
+        return null;
+      }
     } else {
       return null;
     }
   } catch (error: any) {
-    const { response } = error;
-    if (response?.data) {
-      return response.data;
-    }
-    return { error: error.message || error };
+    console.log('[getSubjectsByUserId] [Catch] :', error);
+    return null;
   }
 };
 
@@ -27,15 +31,22 @@ export const createSubjectByUserId = async (
   user_id: number
 ) => {
   try {
-    const result = await client.post('/api/subjects', {
-      subject_title,
-      subject_category,
-      user_id,
-    });
+    console.log('[createSubjectByUserId]');
+    const client = await intialiseClient();
+    if (client) {
+      const result = await client.post('/api/subjects', {
+        subject_title,
+        subject_category,
+        user_id,
+      });
 
-    if (result.status === 200) {
-      console.log('createSubjectByUserId : ', result.data.data);
-      return result.data.data;
+      console.log('[createSubjectByUserId] result : ', result);
+      if (result.status === 200) {
+        console.log('createSubjectByUserId : ', result.data.data);
+        return result.data.data;
+      } else {
+        return null;
+      }
     } else {
       return null;
     }

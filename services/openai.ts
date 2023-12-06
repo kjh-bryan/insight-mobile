@@ -1,7 +1,12 @@
+import intialiseClient from './client';
 import client from './client';
 
 export const formatFrontBackFromOpenAI = async (text_chunk: []) => {
   try {
+    const client = await intialiseClient();
+    if (!client) {
+      return null;
+    }
     const result = await client.post('/api/generateflashcard', {
       text_chunk,
     });
@@ -26,6 +31,10 @@ export const formatFrontBackFromOpenAI = async (text_chunk: []) => {
 
 export const formatQuestionAnswerFromOpenAI = async (text_chunk: []) => {
   try {
+    const client = await intialiseClient();
+    if (!client) {
+      return null;
+    }
     const result = await client.post('/api/generatequiz', {
       text_chunk,
     });

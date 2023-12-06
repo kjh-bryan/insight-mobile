@@ -2,9 +2,13 @@ const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
 
 // const primaryColor = '#FFBEAC';
-const primaryColor = '#E65A41';
+const primaryColor = '#093D65';
 const complementGreen = '#3F826D';
 const complementRed = '#BF211E';
+const loaderBackground = '#F3F3F3';
+const loaderForeground = '#ECEBEB';
+const orangeLoaderBackground = '#d0867e';
+const orangeLoaderForeground = '#ffe4dd';
 const white = '#FFFFFF';
 const slate600 = '#475569';
 const slate500 = '#64748B';
@@ -51,6 +55,8 @@ export default {
     slate50,
     complementGreen,
     complementRed,
+    loaderBackground,
+    loaderForeground,
   },
   // dark: {
   //   primary: primaryColor,
