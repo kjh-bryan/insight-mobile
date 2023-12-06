@@ -42,8 +42,8 @@ const Page = () => {
   const [endSession, setEndSession] = useState(false);
   useEffect(() => {
     (async () => {
+      console.log('flashcard_id : ', flashcard_id);
       const result = await getFlashcardItemByFlashcardId(Number(flashcard_id));
-      console.log('asdsads : ', result);
       setCards(result.result);
     })();
   }, []);

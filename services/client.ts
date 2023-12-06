@@ -7,12 +7,13 @@ const defaultUrl = 'localhost';
 const homeUrl = '192.168.68.67';
 const outsideUrl = '192.168.1.80';
 const hostedURL = 'insight-sg-backend.azurewebsites.net';
-const intialiseClient = async () => {
+const intialiseClient = async (status: string = 'normal') => {
   try {
-    const client = axios.create({ baseURL: `http://${expoUrl}:8080` });
-
-    const jwt = await SecureStore.getItemAsync('access_token');
-    client.defaults.headers.common['Authorization'] = 'Bearer ' + jwt;
+    const client = axios.create({ baseURL: `https://${hostedURL}` });
+    if (status !== 'barebone') {
+      const jwt = await SecureStore.getItemAsync('access_token');
+      client.defaults.headers.common['Authorization'] = 'Bearer ' + jwt;
+    }
     return client;
   } catch (err) {
     console.log('Error at [intialiseClient]');
@@ -20,3 +21,5 @@ const intialiseClient = async () => {
   }
 };
 export default intialiseClient;
+
+export const client = axios.create({ baseURL: `https://${hostedURL}` });

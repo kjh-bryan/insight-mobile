@@ -60,15 +60,15 @@ export function SelectionModal({
         const subject = getSubjects;
         setSubjects(subject.subjects);
         console.log('Check for undefined subjects', typeof subjects);
-        if (subjects != null) {
-          setChoice(subjects[0].subject_id);
+        if (subject != null) {
+          setChoice(subject.subjects[0].subject_id);
         } else {
           console.log(subjects);
         }
         console.log('end');
       }
     })();
-  }, [isFocused]);
+  }, [isFocused, showModal]);
 
   useEffect(() => {
     setErrors({});
@@ -98,12 +98,14 @@ export function SelectionModal({
   };
 
   const handleCreateSubject = async () => {
+    console.log('[handleCreateSubject]');
+
     if (isFormValid) {
       console.log('Submitted form, creating subject');
       const result = await createSubjectByUserId(
         subjectTitle,
         subjectCategory,
-        1
+        Number(userId)
       );
       setSubjectTitle('');
       setSubjectCategory('');
@@ -132,7 +134,7 @@ export function SelectionModal({
             <View style={styles.modalTopContainer}>
               <View style={{ height: 24, width: 24, alignSelf: 'flex-end' }}>
                 <Entypo
-                  name="cross"
+                  name='cross'
                   size={24}
                   color={Colors.default.slate600}
                   onPress={() => {
@@ -259,9 +261,9 @@ export function SelectionModal({
               </Text>
               <TextInput
                 style={{ marginBottom: SIZES.base }}
-                label="Subject Title"
+                label='Subject Title'
                 value={subjectTitle}
-                mode="outlined"
+                mode='outlined'
                 theme={{ roundness: 10 }}
                 outlineColor={Colors.default.slate600}
                 selectionColor={Colors.default.primary}
@@ -272,9 +274,9 @@ export function SelectionModal({
 
               <TextInput
                 style={{ marginBottom: SIZES.base }}
-                label="Subject Category"
+                label='Subject Category'
                 value={subjectCategory}
-                mode="outlined"
+                mode='outlined'
                 theme={{ roundness: 10 }}
                 outlineColor={Colors.default.slate600}
                 selectionColor={Colors.default.primary}

@@ -61,7 +61,7 @@ export function NewNoteModal({
     if (isFormValid) {
       console.log('Submitted form, creating subject');
 
-      handleSetNoteTitle(noteTitle);
+      await handleSetNoteTitle(noteTitle);
     } else {
       console.log("Form is invalid, can't create subject");
     }
@@ -93,9 +93,9 @@ export function NewNoteModal({
             </Text>
             <TextInput
               style={{ marginBottom: SIZES.base }}
-              label="Note Title"
+              label='Note Title'
               value={noteTitle}
-              mode="outlined"
+              mode='outlined'
               theme={{ roundness: 10 }}
               outlineColor={Colors.default.slate600}
               selectionColor={Colors.default.primary}
@@ -117,8 +117,8 @@ export function NewNoteModal({
                   opacity: isFormValid ? 1 : 0.5,
                 }}
                 disabled={!isFormValid}
-                onPress={() => {
-                  handleCreateNote();
+                onPress={async () => {
+                  await handleCreateNote();
                 }}
               >
                 <Text

@@ -1,6 +1,6 @@
 import React from 'react';
 import ContentLoader, { Rect } from 'react-content-loader/native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import Colors from '../constants/Colors';
 
 export const NoteLoader = ({ width }: { width: number }) => (
   <ContentLoader

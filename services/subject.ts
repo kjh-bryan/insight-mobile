@@ -31,6 +31,7 @@ export const createSubjectByUserId = async (
   user_id: number
 ) => {
   try {
+    console.log('[createSubjectByUserId]');
     const client = await intialiseClient();
     if (client) {
       const result = await client.post('/api/subjects', {
@@ -39,6 +40,7 @@ export const createSubjectByUserId = async (
         user_id,
       });
 
+      console.log('[createSubjectByUserId] result : ', result);
       if (result.status === 200) {
         console.log('createSubjectByUserId : ', result.data.data);
         return result.data.data;
