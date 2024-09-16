@@ -29,6 +29,12 @@
 
 ## About The Project
 We envisioned a transformative platform where students seamlessly convert mundane lecture notes into dynamic quizzes and flashcards, thus elevating the very fabric of their educational journey. This vision aims to provide students with an effortless tool that amplifies their understanding, turning conventional study materials into interactive and engaging learning resources.
+
+### Backend Repository
+The backend of Insight is responsible for handling data management, processing, and integrating with external services like OpenAI and Azure. It includes user authentication, data storage, and RESTful API endpoints.
+
+Check out the backend repository here: [Insight Backend Repository](https://github.com/kjh-bryan/insight-backend)
+
 ### Screens 
 ## Login/Register
 | Onboarding                                             | Login                                      | Sign Up                                    |
